@@ -1,25 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace QGM.ScriptableExample
 {
-    public enum ConnectionPointType { In, Out }
+    public enum ConnectionPointType { NodeIn, NodeOut, PathIn, PathOut }
 
     [Serializable]
     public class ConnectionPoint
     {
         [NonSerialized] public BaseNode node;
-        public string id;
         public Rect rect;
         public ConnectionPointType type;
-        public GUIStyle style;
+        public ConnectionPointType oppositeConnection;
+        [NonSerialized] public GUIStyle style;
         public Action<ConnectionPoint> OnClickConnectionPoint;
 
-        public ConnectionPoint(BaseNode node, ConnectionPointType type, Action<ConnectionPoint> OnClickConnectionPoint)
+        public ConnectionPoint(BaseNode node, ConnectionPointType type, ConnectionPointType typeOut, Action<ConnectionPoint> OnClickConnectionPoint)
         {
             this.node = node;
             this.type = type;
+            this.oppositeConnection = typeOut;
             this.OnClickConnectionPoint = OnClickConnectionPoint;
             rect = new Rect(0, 0, 10f, 20f);
 
@@ -30,17 +32,27 @@ namespace QGM.ScriptableExample
         {
             style = new GUIStyle();
 
-            if (type == ConnectionPointType.In)
+            switch (type)
             {
-                style.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn left.png") as Texture2D;
-                style.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn left on.png") as Texture2D;
+                case ConnectionPointType.NodeIn:
+                case ConnectionPointType.PathIn:
+                    style.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn left.png") as Texture2D;
+                    style.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn left on.png") as Texture2D;
+                    break;
+
+                case ConnectionPointType.NodeOut:
+                case ConnectionPointType.PathOut:
+                    style.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn right.png") as Texture2D;
+                    style.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn right on.png") as Texture2D;
+                    break;
             }
-            else
-            {
-                style.normal.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn right.png") as Texture2D;
-                style.active.background = EditorGUIUtility.Load("builtin skins/darkskin/images/btn right on.png") as Texture2D;
-            }
+
             style.border = new RectOffset(4, 4, 12, 12);
+        }
+
+        public ConnectionPointType GetOppositeConnection()
+        {
+            return oppositeConnection;
         }
 
         public void Draw()
@@ -49,11 +61,13 @@ namespace QGM.ScriptableExample
 
             switch (type)
             {
-                case ConnectionPointType.In:
+                case ConnectionPointType.NodeIn:
+                case ConnectionPointType.PathIn:
                     rect.x = node.windowRect.x - rect.width;
                     break;
 
-                case ConnectionPointType.Out:
+                case ConnectionPointType.NodeOut:
+                case ConnectionPointType.PathOut:
                     rect.x = node.windowRect.x + node.windowRect.width;
                     break;
             }
@@ -62,6 +76,8 @@ namespace QGM.ScriptableExample
             {
                 if (OnClickConnectionPoint != null)
                     OnClickConnectionPoint(this);
+                else
+                    Debug.Log("<color=red>[FLY-TROUGH]</color> OnClickConnectionPoint == NULL");
             }
         }
     }

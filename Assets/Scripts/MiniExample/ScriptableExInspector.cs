@@ -10,6 +10,7 @@ namespace QGM.ScriptableExample
     {
         private ScriptableExManager SEManager;
         private SerializedProperty nodes;
+        private SerializedProperty connections;
         //private SerializedProperty startEnd;
         //private SerializedProperty paths;
 
@@ -17,6 +18,7 @@ namespace QGM.ScriptableExample
         {
             SEManager = (ScriptableExManager)target;
             nodes = serializedObject.FindProperty("nodes");
+            connections = serializedObject.FindProperty("connections");
             //startEnd = serializedObject.FindProperty("startEndNodes");
             //paths = serializedObject.FindProperty("pathNodes");
         }
@@ -36,6 +38,7 @@ namespace QGM.ScriptableExample
             //SEManager.word = EditorGUILayout.TextField("Word", SEManager.word);
 
             EditorGUILayout.PropertyField(nodes, new GUIContent("Nodes"), true);
+            EditorGUILayout.PropertyField(connections, new GUIContent("Connections"), true);
             //EditorGUILayout.PropertyField(startEnd, new GUIContent("Start-End Nodes"), true);
             //EditorGUILayout.PropertyField(paths, new GUIContent("Paths"), true);
 

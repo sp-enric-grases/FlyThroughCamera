@@ -36,7 +36,6 @@ namespace SocialPoint.Tools.FlyThrough
 
         void Update()
         {
-            Debug.Log("AAAAAAAAAAAAAAAAAA");
         }
 
         public void CreateNode(StartEndNode sen)

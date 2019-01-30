@@ -4,14 +4,32 @@ using UnityEngine;
 
 namespace QGM.ScriptableExample
 {
+    [Serializable]
     public class Connection
     {
+        public string idIn;
+        public string idOut;
+        //[HideInInspector]
         public ConnectionPoint inPoint;
+        //[HideInInspector]
         public ConnectionPoint outPoint;
-        public Action<Connection> OnClickRemoveConnection;
+        [NonSerialized] public Action<Connection> OnClickRemoveConnection;
 
-        public Connection(ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> OnClickRemoveConnection)
+        public Connection(ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> OnClickRemoveConnection, bool isNew)
         {
+            idIn = inPoint.node.id;
+            idOut = outPoint.node.id;
+
+            CreateConnection(inPoint, outPoint, OnClickRemoveConnection, true);
+        }
+
+        public void CreateConnection(ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> OnClickRemoveConnection, bool isNew)
+        {
+            if (isNew)
+                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating connection between nodes");
+            else
+                Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering connection between nodes");
+
             this.inPoint = inPoint;
             this.outPoint = outPoint;
             this.OnClickRemoveConnection = OnClickRemoveConnection;

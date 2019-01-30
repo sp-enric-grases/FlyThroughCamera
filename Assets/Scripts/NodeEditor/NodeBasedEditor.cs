@@ -74,14 +74,10 @@ public class NodeBasedEditor : EditorWindow
         Vector3 newOffset = new Vector3(offset.x % gridSpacing, offset.y % gridSpacing, 0);
 
         for (int i = 0; i < widthDivs; i++)
-        {
             Handles.DrawLine(new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset, new Vector3(gridSpacing * i, position.height, 0f) + newOffset);
-        }
 
         for (int j = 0; j < heightDivs; j++)
-        {
             Handles.DrawLine(new Vector3(-gridSpacing, gridSpacing * j, 0) + newOffset, new Vector3(position.width, gridSpacing * j, 0f) + newOffset);
-        }
 
         Handles.color = Color.white;
         Handles.EndGUI();

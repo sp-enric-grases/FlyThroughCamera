@@ -34,14 +34,30 @@ namespace SocialPoint.Tools
         private void SetInitRotations()
         {
             if (transform.localEulerAngles.y >= 0 && transform.localEulerAngles.y < 180)
+            {
                 rotX = transform.localEulerAngles.y;
+                Debug.Log(rotX);
+            }
             else
-                rotX = -(MAX_ANGLE - transform.localEulerAngles.y);
+            {
+                if (offsetRotX < 180)
+                    rotX = -(MAX_ANGLE - transform.localEulerAngles.y);
+                else
+                    rotX = transform.localEulerAngles.y;
+
+                Debug.Log(transform.localEulerAngles.y + " -> " + rotX);
+            }
 
             if (transform.localEulerAngles.x >= 0 && transform.localEulerAngles.x < 180)
+            {
                 rotY = -transform.localEulerAngles.x;
+                Debug.Log(transform.localEulerAngles.x + " -> " + rotY);
+            }
             else
+            {
                 rotY = MAX_ANGLE - transform.localEulerAngles.x;
+                Debug.Log(transform.localEulerAngles.x + " -> " + rotY);
+            }
         }
 
         void Update()

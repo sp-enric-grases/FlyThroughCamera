@@ -18,6 +18,13 @@ namespace QGM.ScriptableExample
         private ConnectionPoint selectedInPoint;
         private ConnectionPoint selectedOutPoint;
 
+        [MenuItem("Window/FlyTC Editor")]
+        private static void OpenWindow()
+        {
+            ScriptableExEditor window = GetWindow<ScriptableExEditor>();
+            window.titleContent = new GUIContent("Node Based Editor");
+        }
+
         void OnEnable()
         {
             selectedObject = (GameObject)Selection.activeObject;
@@ -27,32 +34,49 @@ namespace QGM.ScriptableExample
                 sm = selectedObject.GetComponent<ScriptableExManager>();
 
                 if (sm.nodes == null)
+                {
                     sm.nodes = new List<BaseNode>();
+                    sm.connections = new List<Connection>();
+                }
                 else
                 {
                     for (int i = 0; i < sm.nodes.Count; i++)
                     {
                         sm.nodes[i].OnClickRemoveNodeEvent(OnClickRemoveNode);
-                        sm.nodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint);
+                        sm.nodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                    }
+
+                    for (int i = 0; i < sm.connections.Count; i++)
+                    {
+                        sm.connections[i].CreateConnection
+                            (
+                            GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
+                            GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
+                            OnClickRemoveConnection, false
+                            );
                     }
                 }
 
+                connections = sm.connections;
                 nodes = sm.nodes;
             }
         }
 
-        
+        private ConnectionPoint GetConnection(ConnectionPointType type, string id)
+        {
+            switch (type)
+            {
+                case ConnectionPointType.NodeIn: return sm.nodes.Find(i => i.id == id).inPoint;
+                case ConnectionPointType.NodeOut: return sm.nodes.Find(i => i.id == id).outPoint;
+                default: return null;
+            }
+            
+        }
 
         private void OnGUI()
         {
             DrawGrid(20, 0.2f, Color.gray);
             DrawGrid(100, 0.4f, Color.gray);
-
-            
-            //DrawConnections();
-
-            ProcessNodeEvents(Event.current);
-            ProcessEvents(Event.current);
 
             BeginWindows();
 
@@ -67,19 +91,37 @@ namespace QGM.ScriptableExample
 
             EndWindows();
 
+            DrawConnections();
+
+            DrawConnectionLine(Event.current);
+            ProcessNodeEvents(Event.current);
+            ProcessEvents(Event.current);
+
             if (GUI.changed) Repaint();
         }
 
-        //private void DrawConnections()
-        //{
-        //    if (connections != null)
-        //    {
-        //        for (int i = 0; i < connections.Count; i++)
-        //        {
-        //            connections[i].Draw();
-        //        }
-        //    }
-        //}
+        private void DrawConnections()
+        {
+            if (connections == null) return;
+
+            for (int i = 0; i < connections.Count; i++)
+                connections[i].Draw();
+        }
+
+        private void DrawConnectionLine(Event e)
+        {
+            if (selectedInPoint != null && selectedOutPoint == null)
+            {
+                Handles.DrawBezier (selectedInPoint.rect.center, e.mousePosition, selectedInPoint.rect.center + Vector2.left * 50f, e.mousePosition - Vector2.left * 50f, Color.white, null, 3f);
+                GUI.changed = true;
+            }
+
+            if (selectedOutPoint != null && selectedInPoint == null)
+            {
+                Handles.DrawBezier(selectedOutPoint.rect.center, e.mousePosition, selectedOutPoint.rect.center - Vector2.left * 50f, e.mousePosition + Vector2.left * 50f, Color.white, null, 3f);
+                GUI.changed = true;
+            }
+        }
 
         void DrawNodeList(int id)
         {
@@ -100,6 +142,8 @@ namespace QGM.ScriptableExample
                 {
                     bool guiChanged = nodes[i].ProcessEvents(e);
 
+                    Debug.Log(guiChanged);
+
                     if (guiChanged)
                     {
                         GUI.changed = true;
@@ -115,10 +159,10 @@ namespace QGM.ScriptableExample
             switch (e.type)
             {
                 case EventType.MouseDown:
-                    //if (e.button == 0)
-                    //{
-                    //    ClearConnectionSelection();
-                    //}
+                    if (e.button == 0)
+                    {
+                        ClearConnectionSelection();
+                    }
 
                     if (e.button == 1)
                     {
@@ -167,11 +211,14 @@ namespace QGM.ScriptableExample
 
         private void OnClickInPoint(ConnectionPoint inPoint)
         {
+            //Debug.Log("Click In Point: " + inPoint.rect);
             selectedInPoint = inPoint;
+            //Debug.Log("Click In Point: " + selectedInPoint.rect);
 
             if (selectedOutPoint != null)
             {
-                if (selectedOutPoint.node != selectedInPoint.node)
+                if (selectedInPoint.GetOppositeConnection() == selectedOutPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
+                //if (selectedOutPoint.node != selectedInPoint.node)
                 {
                     CreateConnection();
                     ClearConnectionSelection();
@@ -181,15 +228,20 @@ namespace QGM.ScriptableExample
                     ClearConnectionSelection();
                 }
             }
+            else
+                Debug.Log("<color=red>[FLY-TROUGH]</color> selectedOutPoint == NULL");
         }
 
         private void OnClickOutPoint(ConnectionPoint outPoint)
         {
+            //Debug.Log("Click Out Point: " + outPoint.rect);
             selectedOutPoint = outPoint;
+            //Debug.Log("Click Out Point: " + selectedOutPoint.rect);
 
             if (selectedInPoint != null)
             {
-                if (selectedOutPoint.node != selectedInPoint.node)
+                if (selectedInPoint.GetOppositeConnection() == selectedOutPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
+                //if (selectedOutPoint.node != selectedInPoint.node)
                 {
                     CreateConnection();
                     ClearConnectionSelection();
@@ -199,16 +251,14 @@ namespace QGM.ScriptableExample
                     ClearConnectionSelection();
                 }
             }
+            else
+                Debug.Log("<color=red>[FLY-TROUGH]</color> selectedInPoint == NULL");
         }
 
         private void CreateConnection()
         {
-            if (connections == null)
-            {
-                connections = new List<Connection>();
-            }
-
-            connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection));
+            //if (connections == null) connections = new List<Connection>();
+            connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection, true));
         }
 
         private void ClearConnectionSelection()

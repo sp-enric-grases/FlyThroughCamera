@@ -11,8 +11,7 @@ namespace QGM.ScriptableExample
         public string id;
         public GameObject node;
         public string title;
-        public int number;
-        public string word;
+        [HideInInspector]
         public Rect windowRect;
 
         public Action<BaseNode> OnRemoveNode;
@@ -31,11 +30,8 @@ namespace QGM.ScriptableExample
             OnRemoveNode = OnClickRemoveNode;
             this.title = title;
             this.id = id;
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
-            inPoint = new ConnectionPoint(this, ConnectionPointType.In, OnClickInPoint);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.Out, OnClickOutPoint);
-            
-            //CreateConnections(inPointStyle, outPointStyle, OnClickInPoint, OnClickOutPoint);
+
+            CreateConnections(OnClickInPoint, OnClickOutPoint, true);
             CreateStartEndNode();
         }
 
@@ -45,11 +41,15 @@ namespace QGM.ScriptableExample
             OnRemoveNode = OnClickRemoveNode;
         }
 
-        public void CreateConnections(Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint)
+        public void CreateConnections(Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint, bool newConnections)
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
-            inPoint = new ConnectionPoint(this, ConnectionPointType.In, OnClickInPoint);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.Out, OnClickOutPoint);
+            if (newConnections)
+                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
+            else
+                Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
+            
+            inPoint = new ConnectionPoint(this, ConnectionPointType.NodeIn, ConnectionPointType.NodeOut, OnClickInPoint);
+            outPoint = new ConnectionPoint(this, ConnectionPointType.NodeOut, ConnectionPointType.NodeIn, OnClickOutPoint);
         }
 
         public void Drag(Vector2 delta)
@@ -87,8 +87,10 @@ namespace QGM.ScriptableExample
             switch (e.type)
             {
                 case EventType.MouseDown:
+                    
                     if (e.button == 0)
                     {
+                        Debug.Log("Mouse Left Button Down");
                         if (windowRect.Contains(e.mousePosition))
                         {
                             isDragged = true;
@@ -104,12 +106,14 @@ namespace QGM.ScriptableExample
 
                     if (e.button == 1 && isSelected && windowRect.Contains(e.mousePosition))
                     {
+                        Debug.Log("Mouse Right Button Down");
                         ProcessContextMenu();
                         e.Use();
                     }
                     break;
 
                 case EventType.MouseUp:
+                    Debug.Log("Mouse Up");
                     isDragged = false;
                     break;
 
