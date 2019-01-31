@@ -9,7 +9,7 @@ namespace QGM.ScriptableExample
     public class BaseNode
     {
         public string id;
-        public GameObject node;
+        public CameraRotation node;
         public string title;
         [HideInInspector]
         public Rect windowRect;
@@ -65,20 +65,20 @@ namespace QGM.ScriptableExample
 
         public void DrawWindow()
         {
+            EditorGUIUtility.labelWidth = 60;
+            node = EditorGUILayout.ObjectField("Node", node, typeof(CameraRotation), true) as CameraRotation;
+
             if (node != null)
-            {
-                node = EditorGUILayout.ObjectField("Node", node, typeof(GameObject), true) as GameObject;
-                node.transform.position = EditorGUILayout.Vector3Field("Position", node.transform.position);
-            }
+                node.transform.position = EditorGUILayout.Vector3Field("Position", node.transform.position, GUILayout.MaxWidth(178));
         }
 
         private void CreateStartEndNode()
         {
             if (node == null)
             {
-                node = new GameObject();
-                node.AddComponent<CameraRotation>();
-                node.name = "Start-end node";
+                GameObject startEndNode = new GameObject();
+                startEndNode.name = "Start-end node";
+                node = startEndNode.AddComponent<CameraRotation>();
             }
         }
 
@@ -87,33 +87,20 @@ namespace QGM.ScriptableExample
             switch (e.type)
             {
                 case EventType.MouseDown:
-                    
                     if (e.button == 0)
                     {
-                        Debug.Log("Mouse Left Button Down");
-                        if (windowRect.Contains(e.mousePosition))
-                        {
-                            isDragged = true;
-                            GUI.changed = true;
-                            isSelected = true;
-                        }
-                        else
-                        {
-                            GUI.changed = true;
-                            isSelected = false;
-                        }
+                        isSelected = windowRect.Contains(e.mousePosition) ? true : false;
+                        GUI.changed = true;
                     }
 
                     if (e.button == 1 && isSelected && windowRect.Contains(e.mousePosition))
                     {
-                        Debug.Log("Mouse Right Button Down");
                         ProcessContextMenu();
                         e.Use();
                     }
                     break;
 
                 case EventType.MouseUp:
-                    Debug.Log("Mouse Up");
                     isDragged = false;
                     break;
 

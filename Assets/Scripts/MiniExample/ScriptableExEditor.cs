@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using System.Linq;
 
 namespace QGM.ScriptableExample
 {
@@ -78,6 +80,23 @@ namespace QGM.ScriptableExample
             DrawGrid(20, 0.2f, Color.gray);
             DrawGrid(100, 0.4f, Color.gray);
 
+            ProcessNodeEvents(Event.current);
+            DrawNodes();
+
+            DrawConnectionLine(Event.current);
+            DrawConnections();
+
+            ProcessEvents(Event.current);
+
+            if (GUI.changed)
+            {
+                Repaint();
+                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            }
+        }
+
+        private void DrawNodes()
+        {
             BeginWindows();
 
             if (nodes != null)
@@ -90,14 +109,6 @@ namespace QGM.ScriptableExample
             }
 
             EndWindows();
-
-            DrawConnections();
-
-            DrawConnectionLine(Event.current);
-            ProcessNodeEvents(Event.current);
-            ProcessEvents(Event.current);
-
-            if (GUI.changed) Repaint();
         }
 
         private void DrawConnections()
@@ -141,13 +152,7 @@ namespace QGM.ScriptableExample
                 for (int i = nodes.Count - 1; i >= 0; i--)
                 {
                     bool guiChanged = nodes[i].ProcessEvents(e);
-
-                    Debug.Log(guiChanged);
-
-                    if (guiChanged)
-                    {
-                        GUI.changed = true;
-                    }
+                    if (guiChanged) GUI.changed = true;
                 }
             }
         }
@@ -203,7 +208,7 @@ namespace QGM.ScriptableExample
 
         private void OnClickAddNode(Vector2 mousePosition)
         {
-            Rect rect = new Rect(mousePosition.x, mousePosition.y, 250, 100);
+            Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
             BaseNode node = new BaseNode(rect, OnClickRemoveNode, "Start-End Node", OnClickInPoint, OnClickOutPoint, GUID.Generate().ToString());
 
             nodes.Add(node);
@@ -211,22 +216,14 @@ namespace QGM.ScriptableExample
 
         private void OnClickInPoint(ConnectionPoint inPoint)
         {
-            //Debug.Log("Click In Point: " + inPoint.rect);
             selectedInPoint = inPoint;
-            //Debug.Log("Click In Point: " + selectedInPoint.rect);
 
             if (selectedOutPoint != null)
             {
                 if (selectedInPoint.GetOppositeConnection() == selectedOutPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
-                //if (selectedOutPoint.node != selectedInPoint.node)
-                {
                     CreateConnection();
-                    ClearConnectionSelection();
-                }
-                else
-                {
-                    ClearConnectionSelection();
-                }
+
+                ClearConnectionSelection();
             }
             else
                 Debug.Log("<color=red>[FLY-TROUGH]</color> selectedOutPoint == NULL");
@@ -234,22 +231,14 @@ namespace QGM.ScriptableExample
 
         private void OnClickOutPoint(ConnectionPoint outPoint)
         {
-            //Debug.Log("Click Out Point: " + outPoint.rect);
             selectedOutPoint = outPoint;
-            //Debug.Log("Click Out Point: " + selectedOutPoint.rect);
 
             if (selectedInPoint != null)
             {
-                if (selectedInPoint.GetOppositeConnection() == selectedOutPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
-                //if (selectedOutPoint.node != selectedInPoint.node)
-                {
+                if (selectedOutPoint.GetOppositeConnection() == selectedInPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
                     CreateConnection();
-                    ClearConnectionSelection();
-                }
-                else
-                {
-                    ClearConnectionSelection();
-                }
+
+                ClearConnectionSelection();
             }
             else
                 Debug.Log("<color=red>[FLY-TROUGH]</color> selectedInPoint == NULL");
@@ -257,7 +246,7 @@ namespace QGM.ScriptableExample
 
         private void CreateConnection()
         {
-            //if (connections == null) connections = new List<Connection>();
+            // We need to check first if the connection exists (this feature is missing!!)
             connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection, true));
         }
 
@@ -281,6 +270,16 @@ namespace QGM.ScriptableExample
             //}
 
             nodes.Remove(node);
+            RemoveRelatedConnections(node);
+        }
+
+        private void RemoveRelatedConnections(BaseNode node)
+        {
+            foreach (var item in connections.ToList())
+            {
+                if (item.idIn == node.id || item.idOut == node.id)
+                    connections.Remove(item);
+            }
         }
 
         private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
