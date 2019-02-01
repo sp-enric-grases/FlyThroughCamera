@@ -17,9 +17,9 @@ namespace QGM.ScriptableExample
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
-        public PathNode(Rect rect, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, string title, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint, string id)
+        public PathNode(Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint)
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new start-end node");
+            Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new path node");
 
             windowRect = rect;
             this.typeOfNode = typeOfNode;
@@ -38,8 +38,8 @@ namespace QGM.ScriptableExample
             else
                 Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
 
-            inPoint = new ConnectionPoint(this, ConnectionPointType.NodeIn, ConnectionPointType.NodeOut, OnClickInPoint);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.NodeOut, ConnectionPointType.NodeIn, OnClickOutPoint);
+            inPoint = new ConnectionPoint(this, ConnectionPointType.PathIn, ConnectionPointType.NodeOut, OnClickInPoint);
+            outPoint = new ConnectionPoint(this, ConnectionPointType.PathOut, ConnectionPointType.NodeIn, OnClickOutPoint);
         }
 
         public override void DrawNodes()

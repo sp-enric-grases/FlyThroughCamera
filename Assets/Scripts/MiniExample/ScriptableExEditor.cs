@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using System.Linq;
 
 namespace QGM.ScriptableExample
 {
@@ -31,36 +31,52 @@ namespace QGM.ScriptableExample
                 sm = selectedObject.GetComponent<ScriptableExManager>();
 
                 if (sm.nodes == null)
+                    InitNodeLists();
+                else
                 {
-                    sm.nodes = new List<BaseNode>();
-                    sm.startEndNodes = new List<StartEndNode>();
-                    sm.pathNodes = new List<PathNode>();
-                    sm.connections = new List<Connection>();
+                    RecoveringNodes();
+                    //RecoveringConnections();
                 }
-                //else
-                //{
-                //    for (int i = 0; i < sm.nodes.Count; i++)
-                //    {
-                //        sm.nodes[i].OnClickRemoveNodeEvent(OnClickRemoveNode);
 
-                //        sm.startEndNodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
-                //    }
+                SetNodeLists();
+            }
+        }
 
-                //    for (int i = 0; i < sm.connections.Count; i++)
-                //    {
-                //        sm.connections[i].CreateConnection
-                //            (
-                //            GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
-                //            GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
-                //            OnClickRemoveConnection, false
-                //            );
-                //    }
-                //}
-                
-                nodes = sm.nodes;
-                startEndNodes = sm.startEndNodes;
-                pathNodes = sm.pathNodes;
-                connections = sm.connections;
+        private void InitNodeLists()
+        {
+            sm.nodes = new List<BaseNode>();
+            sm.startEndNodes = new List<StartEndNode>();
+            sm.pathNodes = new List<PathNode>();
+            sm.connections = new List<Connection>();
+        }
+
+        private void SetNodeLists()
+        {
+            nodes = sm.nodes;
+            startEndNodes = sm.startEndNodes;
+            pathNodes = sm.pathNodes;
+            connections = sm.connections;
+        }
+
+        private void RecoveringNodes()
+        {
+            for (int i = 0; i < sm.nodes.Count; i++)
+            {
+                sm.nodes[i].OnClickRemoveNodeEvent(OnClickRemoveNode);
+                //sm.startEndNodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+            }
+        }
+
+        private void RecoveringConnections()
+        {
+            for (int i = 0; i < sm.connections.Count; i++)
+            {
+                sm.connections[i].CreateConnection
+                    (
+                    GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
+                    GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
+                    OnClickRemoveConnection, false
+                    );
             }
         }
 
@@ -72,7 +88,6 @@ namespace QGM.ScriptableExample
                 case ConnectionPointType.NodeOut: return sm.startEndNodes.Find(i => i.id == id).outPoint;
                 default: return null;
             }
-            
         }
 
         private void OnGUI()
@@ -104,7 +119,7 @@ namespace QGM.ScriptableExample
                 for (int i = 0; i < nodes.Count; i++)
                 {
                     nodes[i].windowRect = GUI.Window(i, nodes[i].windowRect, DrawNodeList, nodes[i].title);
-                    //nodes[i].DrawNodes();
+                    nodes[i].DrawNodes();
                 }
             }
 
@@ -202,15 +217,15 @@ namespace QGM.ScriptableExample
         private void ProcessContextMenu(Vector2 mousePosition)
         {
             GenericMenu genericMenu = new GenericMenu();
-            genericMenu.AddItem(new GUIContent("Add Start-End Node"), false, () => OnClickAddNode(mousePosition));
+            genericMenu.AddItem(new GUIContent("Add Start-End Node"), false, () => OnClickAddStartEndNode(mousePosition));
             genericMenu.AddItem(new GUIContent("Add Path"), false, () => OnClickAddPath(mousePosition));
             genericMenu.ShowAsContext();
         }
 
-        private void OnClickAddNode(Vector2 mousePosition)
+        private void OnClickAddStartEndNode(Vector2 mousePosition)
         {
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
-            StartEndNode node = new StartEndNode(rect, TypeOfNode.StartEnd, OnClickRemoveNode, "Start-End Node", OnClickInPoint, OnClickOutPoint, GUID.Generate().ToString());
+            StartEndNode node = new StartEndNode(rect, GUID.Generate().ToString(), "Start-End Node", TypeOfNode.StartEnd, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
             nodes.Add(node);
             sm.startEndNodes.Add(node);
@@ -219,7 +234,7 @@ namespace QGM.ScriptableExample
         private void OnClickAddPath(Vector2 mousePosition)
         {
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 250, 150);
-            PathNode node = new PathNode(rect, TypeOfNode.Path, OnClickRemoveNode, "Path", OnClickInPoint, OnClickOutPoint, GUID.Generate().ToString());
+            PathNode node = new PathNode(rect, GUID.Generate().ToString(), "Path", TypeOfNode.Path, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
             nodes.Add(node);
             sm.pathNodes.Add(node);

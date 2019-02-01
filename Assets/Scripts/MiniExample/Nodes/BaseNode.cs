@@ -18,7 +18,7 @@ namespace QGM.ScriptableExample
 
         public void OnClickRemoveNodeEvent (Action<BaseNode> OnClickRemoveNode)
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering an existing start-end node");
+            Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering an existing node");
             OnRemoveNode = OnClickRemoveNode;
         }
 
