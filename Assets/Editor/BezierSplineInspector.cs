@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace SocialPoint.Tools
 {
-    //[CustomEditor(typeof(BezierSpline))]
-    public class BezierSplineInspector : Editor
+    [CustomEditor(typeof(BezierSpline))]
+    public class BezierSplineInspector : BoxLayoutInspector
     {
         private BezierSpline spline;
 
@@ -26,39 +26,66 @@ namespace SocialPoint.Tools
         {
             serializedObject.Update();
 
-            EditorGUI.BeginChangeCheck();
-            
+            SectionBasicProperties();
+            SectionDrawSelectedPoint();
+            SectionAddCurve();
+        }
+
+        private void SectionBasicProperties()
+        {
+            Header("Basic Properties");
+
+            spline.showPath = EditorGUILayout.Toggle("Is Visible", spline.showPath);
+            EditorGUI.BeginDisabledGroup(!spline.showPath);
+            spline.steps = Mathf.Clamp(EditorGUILayout.IntField("Number of Steps", spline.steps), 1, 100);
+            spline.pathColor = EditorGUILayout.ColorField("Color", spline.pathColor);
+            EditorGUI.EndDisabledGroup();
+
+            Footer();
+        }
+
+        private void SectionDrawSelectedPoint()
+        {
             if (selectedIndex >= 0 && selectedIndex < spline.ControlPointCount)
             {
-                DrawSelectedPointInspector();
+                Header("Selected Point");
+
+                GUILayout.Label("Selected Point");
+                EditorGUI.BeginChangeCheck();
+                Vector3 point = EditorGUILayout.Vector3Field("Position", spline.GetControlPoint(selectedIndex));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    Undo.RecordObject(spline, "Move Point");
+                    EditorUtility.SetDirty(spline);
+                    spline.SetControlPoint(selectedIndex, point);
+                }
+
+                EditorGUI.BeginChangeCheck();
+                BezierControlPointMode mode = (BezierControlPointMode)EditorGUILayout.EnumPopup("Mode", spline.GetControlPointMode(selectedIndex));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    Undo.RecordObject(spline, "Change Point Mode");
+                    spline.SetControlPointMode(selectedIndex, mode);
+                    EditorUtility.SetDirty(spline);
+                }
+
+                Footer();
             }
-            if (GUILayout.Button("Add Curve"))
+        }
+
+        private void SectionAddCurve()
+        {
+            Header("Add Curve");
+
+            EditorGUI.BeginChangeCheck();
+            if (GUILayout.Button("Add New Curve"))
             {
                 Undo.RecordObject(spline, "Add Curve");
                 spline.AddCurve();
                 EditorUtility.SetDirty(spline);
             }
-        }
 
-        private void DrawSelectedPointInspector()
-        {
-            GUILayout.Label("Selected Point");
-            EditorGUI.BeginChangeCheck();
-            Vector3 point = EditorGUILayout.Vector3Field("Position", spline.GetControlPoint(selectedIndex));
-            if (EditorGUI.EndChangeCheck())
-            {
-                Undo.RecordObject(spline, "Move Point");
-                EditorUtility.SetDirty(spline);
-                spline.SetControlPoint(selectedIndex, point);
-            }
-            EditorGUI.BeginChangeCheck();
-            BezierControlPointMode mode = (BezierControlPointMode)EditorGUILayout.EnumPopup("Mode", spline.GetControlPointMode(selectedIndex));
-            if (EditorGUI.EndChangeCheck())
-            {
-                Undo.RecordObject(spline, "Change Point Mode");
-                spline.SetControlPointMode(selectedIndex, mode);
-                EditorUtility.SetDirty(spline);
-            }
+            Footer();
         }
 
         public void OnSceneGUI()
@@ -66,23 +93,24 @@ namespace SocialPoint.Tools
             handleTransform = spline.transform;
             handleRotation = UnityEditor.Tools.pivotRotation == PivotRotation.Local ? handleTransform.rotation : Quaternion.identity;
             
-            Vector3 p0 = ShowPoint(0);
+            Vector3 p0 = ShowPoint(0, Color.white);
+
             for (int i = 1; i < spline.ControlPointCount; i += 3)
             {
-                Vector3 p1 = ShowPoint(i);
-                Vector3 p2 = ShowPoint(i + 1);
-                Vector3 p3 = ShowPoint(i + 2);
+                Vector3 p1 = ShowPoint(i, Color.yellow);
+                Vector3 p2 = ShowPoint(i + 1, Color.yellow);
+                Vector3 p3 = ShowPoint(i + 2, Color.white);
 
-                Handles.color = Color.gray;
+                Handles.color = Color.black;
                 Handles.DrawLine(p0, p1);
                 Handles.DrawLine(p2, p3);
 
-                Handles.DrawBezier(p0, p3, p1, p2, Color.white, null, 2f);
+                Handles.DrawBezier(p0, p3, p1, p2, Color.cyan, null, 2f);
                 p0 = p3;
             }
         }
 
-        private Vector3 ShowPoint(int index)
+        private Vector3 ShowPoint(int index, Color color)
         {
             Vector3 point = handleTransform.TransformPoint(spline.GetControlPoint(index));
             float size = HandleUtility.GetHandleSize(point);
@@ -90,7 +118,8 @@ namespace SocialPoint.Tools
             {
                 size *= 2f;
             }
-            Handles.color = modeColors[(int)spline.GetControlPointMode(index)];
+            Handles.color = color;
+            //Handles.color = modeColors[(int)spline.GetControlPointMode(index)];
             if (Handles.Button(point, handleRotation, size * HANDLE_SIZE, size * PICK_SIZE, Handles.DotCap))
             {
                 selectedIndex = index;

@@ -11,16 +11,16 @@ namespace QGM.ScriptableExample
         private ScriptableExManager SEManager;
         private SerializedProperty nodes;
         private SerializedProperty connections;
-        //private SerializedProperty startEnd;
-        //private SerializedProperty paths;
+        private SerializedProperty startEndNodes;
+        private SerializedProperty pathNodes;
 
         void OnEnable()
         {
             SEManager = (ScriptableExManager)target;
             nodes = serializedObject.FindProperty("nodes");
             connections = serializedObject.FindProperty("connections");
-            //startEnd = serializedObject.FindProperty("startEndNodes");
-            //paths = serializedObject.FindProperty("pathNodes");
+            startEndNodes = serializedObject.FindProperty("startEndNodes");
+            pathNodes = serializedObject.FindProperty("pathNodes");
         }
 
         public override void OnInspectorGUI()
@@ -34,13 +34,11 @@ namespace QGM.ScriptableExample
                 scriptableExEditor.titleContent = new GUIContent("Scr Editor");
             }
 
-            //SEManager.number = EditorGUILayout.IntField("Number", SEManager.number);
-            //SEManager.word = EditorGUILayout.TextField("Word", SEManager.word);
-
             EditorGUILayout.PropertyField(nodes, new GUIContent("Nodes"), true);
+            EditorGUILayout.PropertyField(startEndNodes, new GUIContent("Start-End Nodes"), true);
+            EditorGUILayout.PropertyField(pathNodes, new GUIContent("Paths"), true);
+            GUILayout.Space(5);
             EditorGUILayout.PropertyField(connections, new GUIContent("Connections"), true);
-            //EditorGUILayout.PropertyField(startEnd, new GUIContent("Start-End Nodes"), true);
-            //EditorGUILayout.PropertyField(paths, new GUIContent("Paths"), true);
 
             serializedObject.ApplyModifiedProperties();
             if (GUI.changed) EditorUtility.SetDirty(SEManager);

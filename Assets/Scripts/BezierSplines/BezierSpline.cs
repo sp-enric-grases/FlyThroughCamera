@@ -1,25 +1,29 @@
 ﻿using UnityEngine;
 using System;
 
-public class BezierSpline : MonoBehaviour {
+public enum BezierControlPointMode { Free, Aligned, Mirrored }
 
-	[SerializeField]
-	private Vector3[] points;
+public class BezierSpline : MonoBehaviour
+{
+    public bool showPath;
+    public int steps = 12;
+    public Color pathColor = Color.cyan;
+	public Vector3[] points;
+	public BezierControlPointMode[] modes;
 
-	[SerializeField]
-	private BezierControlPointMode[] modes;
+    private bool isSelected;
 
-	public int ControlPointCount {
-		get {
-			return points.Length;
-		}
+	public int ControlPointCount
+    {
+		get { return points.Length; }
 	}
 
-	public Vector3 GetControlPoint (int index) {
+	public Vector3 GetControlPoint (int index)
+    {
 		return points[index];
 	}
 
-	public void SetControlPoint (int index, Vector3 point) {
+    public void SetControlPoint (int index, Vector3 point) {
 		if (index % 3 == 0) {
 			Vector3 delta = point - points[index];
 			
@@ -149,4 +153,24 @@ public class BezierSpline : MonoBehaviour {
 			BezierControlPointMode.Free
 		};
 	}
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (UnityEditor.Selection.activeGameObject == gameObject) return;
+        if (!showPath) return;
+
+        int NUMBER_OF_LINES = steps * modes.Length;
+
+        for (int i = 0; i < NUMBER_OF_LINES - 1; i++)
+        {
+            Vector3 pointA = GetPoint((float)i / NUMBER_OF_LINES);
+            Vector3 pointB = GetPoint(((float)i + 1) / NUMBER_OF_LINES);
+
+            Gizmos.color = pathColor;
+            Gizmos.DrawLine(pointA, pointB);
+        }
+    }
+#endif
+
 }

@@ -12,6 +12,8 @@ namespace QGM.ScriptableExample
         private GameObject selectedObject;
         private ScriptableExManager sm;
         private List<BaseNode> nodes;
+        private List<StartEndNode> startEndNodes;
+        private List<PathNode> pathNodes;
         private List<Connection> connections;
 
         private Vector2 offset;
@@ -19,13 +21,6 @@ namespace QGM.ScriptableExample
 
         private ConnectionPoint selectedInPoint;
         private ConnectionPoint selectedOutPoint;
-
-        [MenuItem("Window/FlyTC Editor")]
-        private static void OpenWindow()
-        {
-            ScriptableExEditor window = GetWindow<ScriptableExEditor>();
-            window.titleContent = new GUIContent("Node Based Editor");
-        }
 
         void OnEnable()
         {
@@ -38,29 +33,34 @@ namespace QGM.ScriptableExample
                 if (sm.nodes == null)
                 {
                     sm.nodes = new List<BaseNode>();
+                    sm.startEndNodes = new List<StartEndNode>();
+                    sm.pathNodes = new List<PathNode>();
                     sm.connections = new List<Connection>();
                 }
-                else
-                {
-                    for (int i = 0; i < sm.nodes.Count; i++)
-                    {
-                        sm.nodes[i].OnClickRemoveNodeEvent(OnClickRemoveNode);
-                        sm.nodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
-                    }
+                //else
+                //{
+                //    for (int i = 0; i < sm.nodes.Count; i++)
+                //    {
+                //        sm.nodes[i].OnClickRemoveNodeEvent(OnClickRemoveNode);
 
-                    for (int i = 0; i < sm.connections.Count; i++)
-                    {
-                        sm.connections[i].CreateConnection
-                            (
-                            GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
-                            GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
-                            OnClickRemoveConnection, false
-                            );
-                    }
-                }
+                //        sm.startEndNodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                //    }
 
-                connections = sm.connections;
+                //    for (int i = 0; i < sm.connections.Count; i++)
+                //    {
+                //        sm.connections[i].CreateConnection
+                //            (
+                //            GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
+                //            GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
+                //            OnClickRemoveConnection, false
+                //            );
+                //    }
+                //}
+                
                 nodes = sm.nodes;
+                startEndNodes = sm.startEndNodes;
+                pathNodes = sm.pathNodes;
+                connections = sm.connections;
             }
         }
 
@@ -68,8 +68,8 @@ namespace QGM.ScriptableExample
         {
             switch (type)
             {
-                case ConnectionPointType.NodeIn: return sm.nodes.Find(i => i.id == id).inPoint;
-                case ConnectionPointType.NodeOut: return sm.nodes.Find(i => i.id == id).outPoint;
+                case ConnectionPointType.NodeIn: return sm.startEndNodes.Find(i => i.id == id).inPoint;
+                case ConnectionPointType.NodeOut: return sm.startEndNodes.Find(i => i.id == id).outPoint;
                 default: return null;
             }
             
@@ -104,7 +104,7 @@ namespace QGM.ScriptableExample
                 for (int i = 0; i < nodes.Count; i++)
                 {
                     nodes[i].windowRect = GUI.Window(i, nodes[i].windowRect, DrawNodeList, nodes[i].title);
-                    nodes[i].DrawNodes();
+                    //nodes[i].DrawNodes();
                 }
             }
 
@@ -136,12 +136,12 @@ namespace QGM.ScriptableExample
 
         void DrawNodeList(int id)
         {
-            //switch (nodeList[id].typeOfNode)
-            //{
-            //    case TypeOfNode.StartEnd: startEndNodes.Find(n => n.id == nodeList[id].id).DrawWindow(); break;
-            //    case TypeOfNode.Path: pathNodes.Find(n => n.id == nodeList[id].id).DrawWindow(); break;
-            //}
-            nodes[id].DrawWindow();
+            switch (nodes[id].typeOfNode)
+            {
+                case TypeOfNode.StartEnd: startEndNodes.Find(n => n.id == nodes[id].id).DrawWindow(); break;
+                case TypeOfNode.Path: pathNodes.Find(n => n.id == nodes[id].id).DrawWindow(); break;
+            }
+
             GUI.DragWindow();
         }
 
@@ -203,15 +203,26 @@ namespace QGM.ScriptableExample
         {
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Add Start-End Node"), false, () => OnClickAddNode(mousePosition));
+            genericMenu.AddItem(new GUIContent("Add Path"), false, () => OnClickAddPath(mousePosition));
             genericMenu.ShowAsContext();
         }
 
         private void OnClickAddNode(Vector2 mousePosition)
         {
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
-            BaseNode node = new BaseNode(rect, OnClickRemoveNode, "Start-End Node", OnClickInPoint, OnClickOutPoint, GUID.Generate().ToString());
+            StartEndNode node = new StartEndNode(rect, TypeOfNode.StartEnd, OnClickRemoveNode, "Start-End Node", OnClickInPoint, OnClickOutPoint, GUID.Generate().ToString());
 
             nodes.Add(node);
+            sm.startEndNodes.Add(node);
+        }
+
+        private void OnClickAddPath(Vector2 mousePosition)
+        {
+            Rect rect = new Rect(mousePosition.x, mousePosition.y, 250, 150);
+            PathNode node = new PathNode(rect, TypeOfNode.Path, OnClickRemoveNode, "Path", OnClickInPoint, OnClickOutPoint, GUID.Generate().ToString());
+
+            nodes.Add(node);
+            sm.pathNodes.Add(node);
         }
 
         private void OnClickInPoint(ConnectionPoint inPoint)
@@ -263,14 +274,14 @@ namespace QGM.ScriptableExample
 
         private void OnClickRemoveNode(BaseNode node)
         {
-            //switch (node.typeOfNode)
-            //{
-            //    case TypeOfNode.StartEnd: startEndNodes.Remove(startEndNodes.Find(n => n.id == node.id)); break;
-            //    case TypeOfNode.Path: pathNodes.Remove(pathNodes.Find(n => n.id == node.id)); break;
-            //}
+            switch (node.typeOfNode)
+            {
+                case TypeOfNode.StartEnd: startEndNodes.Remove(startEndNodes.Find(n => n.id == node.id)); break;
+                case TypeOfNode.Path: pathNodes.Remove(pathNodes.Find(n => n.id == node.id)); break;
+            }
 
             nodes.Remove(node);
-            RemoveRelatedConnections(node);
+            //RemoveRelatedConnections(node);
         }
 
         private void RemoveRelatedConnections(BaseNode node)
