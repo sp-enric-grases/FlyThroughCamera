@@ -12,7 +12,7 @@ namespace QGM.ScriptableExample
         public string title;
         public TypeOfNode typeOfNode;
         public Action<BaseNode> OnRemoveNode;
-        [HideInInspector] public Rect windowRect;
+        public Rect windowRect;
         [NonSerialized] public bool isDragged;
         [NonSerialized] public bool isSelected;
 

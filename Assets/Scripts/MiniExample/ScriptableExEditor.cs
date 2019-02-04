@@ -112,20 +112,28 @@ namespace QGM.ScriptableExample
         {
             BeginWindows();
 
-            //if (sm.nodes != null)
+            for (int id = 0; id < sm.nodes.Count; id++)
             {
-                for (int i = 0; i < sm.nodes.Count; i++)
+                switch (sm.nodes[id].typeOfNode)
                 {
-                    sm.nodes[i].windowRect = GUI.Window(i, sm.nodes[i].windowRect, DrawNodeList, sm.nodes[i].title);
-                    sm.nodes[i].DrawNodes();
+                    case TypeOfNode.StartEnd:
+                        StartEndNode sen = sm.startEndNodes.Find(n => n.id == sm.nodes[id].id);
+                        sen.windowRect = GUI.Window(id, sen.windowRect, DrawNodeList, sen.title);
+                        sen.DrawNodes();
+                        break;
+                    case TypeOfNode.Path:
+                        PathNode pn = sm.pathNodes.Find(n => n.id == sm.nodes[id].id);
+                        pn.windowRect = GUI.Window(id, pn.windowRect, DrawNodeList, pn.title);
+                        pn.DrawNodes();
+                        break;
                 }
             }
 
-            for (int i = 0; i < sm.startEndNodes.Count; i++)
-                sm.startEndNodes[i].DrawNodes();
+            //for (int i = 0; i < sm.startEndNodes.Count; i++)
+            //    sm.startEndNodes[i].DrawNodes();
 
-            for (int i = 0; i < sm.pathNodes.Count; i++)
-                sm.pathNodes[i].DrawNodes();
+            //for (int i = 0; i < sm.pathNodes.Count; i++)
+            //    sm.pathNodes[i].DrawNodes();
 
             EndWindows();
         }
