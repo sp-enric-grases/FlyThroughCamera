@@ -44,6 +44,7 @@ namespace QGM.ScriptableExample
 
         public override void DrawNodes()
         {
+            Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Path connections");
             inPoint.Draw();
             outPoint.Draw();
         }

@@ -27,7 +27,10 @@ namespace QGM.ScriptableExample
             windowRect.position += delta;
         }
 
-        public virtual void DrawNodes() { }
+        public virtual void DrawNodes()
+        {
+            Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing nodes");
+        }
 
         public virtual void DrawWindow() { }
 

@@ -39,6 +39,8 @@ namespace QGM.ScriptableExample
 
         public override void DrawNodes()
         {
+            Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Start-End connections");
+
             inPoint.Draw();
             outPoint.Draw();
         }
