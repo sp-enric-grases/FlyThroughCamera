@@ -6,6 +6,13 @@ using UnityEngine;
 namespace QGM.ScriptableExample
 {
     [Serializable]
+    public class Node
+    {
+        public string id;
+        public TypeOfNode typeOfNode;
+    }
+
+    [Serializable]
     public class BaseNode
     {
         public string id;

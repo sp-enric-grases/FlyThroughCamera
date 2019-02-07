@@ -37,7 +37,7 @@ namespace QGM.ScriptableExample
 
         private void InitNodeLists()
         {
-            sm.nodes = new List<BaseNode>();
+            sm.nodes = new List<Node>();
             sm.startEndNodes = new List<StartEndNode>();
             sm.pathNodes = new List<PathNode>();
             sm.connections = new List<Connection>();
@@ -45,24 +45,22 @@ namespace QGM.ScriptableExample
 
         private void RecoveringNodes()
         {
-            for (int i = 0; i < sm.nodes.Count; i++)
+            for (int id = 0; id < sm.nodes.Count; id++)
             {
-                sm.nodes[i].OnClickRemoveNodeEvent(OnClickRemoveNode);
-
-                //switch (sm.nodes[i].typeOfNode)
-                //{
-                //    case TypeOfNode.StartEnd: startEndNodes.Find(n => n.id == nodes[i].id).CreateConnections(OnClickInPoint, OnClickOutPoint, false); break;
-                //    case TypeOfNode.Path: pathNodes.Find(n => n.id == nodes[i].id).CreateConnections(OnClickInPoint, OnClickOutPoint, false); break;
-                //}
-
-                //sm.startEndNodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                switch (sm.nodes[id].typeOfNode)
+                {
+                    case TypeOfNode.StartEnd:
+                        StartEndNode sen = sm.startEndNodes.Find(n => n.id == sm.nodes[id].id);
+                        sen.CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                        sen.OnClickRemoveNodeEvent(OnClickRemoveNode);
+                        break;
+                    case TypeOfNode.Path:
+                        PathNode pn = sm.pathNodes.Find(n => n.id == sm.nodes[id].id);
+                        pn.CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                        pn.OnClickRemoveNodeEvent(OnClickRemoveNode);
+                        break;
+                }
             }
-
-            for (int i = 0; i < sm.startEndNodes.Count; i++)
-                sm.startEndNodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
-
-            for (int i = 0; i < sm.pathNodes.Count; i++)
-                sm.pathNodes[i].CreateConnections(OnClickInPoint, OnClickOutPoint, false);
         }
 
         //private void RecoveringConnections()
@@ -129,12 +127,6 @@ namespace QGM.ScriptableExample
                 }
             }
 
-            //for (int i = 0; i < sm.startEndNodes.Count; i++)
-            //    sm.startEndNodes[i].DrawNodes();
-
-            //for (int i = 0; i < sm.pathNodes.Count; i++)
-            //    sm.pathNodes[i].DrawNodes();
-
             EndWindows();
         }
 
@@ -165,8 +157,8 @@ namespace QGM.ScriptableExample
         {
             switch (sm.nodes[id].typeOfNode)
             {
-                case TypeOfNode.StartEnd: sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).DrawWindow(); break;
-                case TypeOfNode.Path: sm.pathNodes.Find(n => n.id == sm.nodes[id].id).DrawWindow(); break;
+                case TypeOfNode.StartEnd:   sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).DrawWindow();   break;
+                case TypeOfNode.Path:       sm.pathNodes.Find(n => n.id == sm.nodes[id].id).DrawWindow();       break;
             }
 
             GUI.DragWindow();
@@ -174,13 +166,17 @@ namespace QGM.ScriptableExample
 
         private void ProcessNodeEvents(Event e)
         {
-            if (sm.nodes != null)
+            for (int id = 0; id < sm.nodes.Count; id++)
             {
-                for (int i = sm.nodes.Count - 1; i >= 0; i--)
+                bool guiChanged = false;
+
+                switch (sm.nodes[id].typeOfNode)
                 {
-                    bool guiChanged = sm.nodes[i].ProcessEvents(e);
-                    if (guiChanged) GUI.changed = true;
+                    case TypeOfNode.StartEnd:   guiChanged = sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).ProcessEvents(e); break;
+                    case TypeOfNode.Path:       guiChanged = sm.pathNodes.Find(n => n.id == sm.nodes[id].id).ProcessEvents(e);     break;
                 }
+
+                if (guiChanged) GUI.changed = true;
             }
         }
 
@@ -215,11 +211,12 @@ namespace QGM.ScriptableExample
         {
             drag = delta;
 
-            if (sm.nodes != null)
+            for (int id = 0; id < sm.nodes.Count; id++)
             {
-                for (int i = 0; i < sm.nodes.Count; i++)
+                switch (sm.nodes[id].typeOfNode)
                 {
-                    sm.nodes[i].Drag(delta);
+                    case TypeOfNode.StartEnd:   sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).Drag(delta);    break;
+                    case TypeOfNode.Path:       sm.pathNodes.Find(n => n.id == sm.nodes[id].id).Drag(delta);        break;
                 }
             }
 
@@ -239,7 +236,7 @@ namespace QGM.ScriptableExample
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
             StartEndNode node = new StartEndNode(rect, GUID.Generate().ToString(), "Start-End Node", TypeOfNode.StartEnd, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
-            sm.nodes.Add(node);
+            AddNode(node.id, node.typeOfNode);
             sm.startEndNodes.Add(node);
         }
 
@@ -248,8 +245,13 @@ namespace QGM.ScriptableExample
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 250, 150);
             PathNode node = new PathNode(rect, GUID.Generate().ToString(), "Path", TypeOfNode.Path, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
-            sm.nodes.Add(node);
+            AddNode(node.id, node.typeOfNode);
             sm.pathNodes.Add(node);
+        }
+
+        private void AddNode(string id, TypeOfNode typeOfNode)
+        {
+            sm.nodes.Add(new Node() { id = id, typeOfNode = typeOfNode });
         }
 
         private void OnClickInPoint(ConnectionPoint inPoint)
@@ -303,11 +305,12 @@ namespace QGM.ScriptableExample
         {
             switch (node.typeOfNode)
             {
-                case TypeOfNode.StartEnd: sm.startEndNodes.Remove(sm.startEndNodes.Find(n => n.id == node.id)); break;
-                case TypeOfNode.Path: sm.pathNodes.Remove(sm.pathNodes.Find(n => n.id == node.id)); break;
+                case TypeOfNode.StartEnd:   sm.startEndNodes.Remove(sm.startEndNodes.Find(n => n.id == node.id));   break;
+                case TypeOfNode.Path:       sm.pathNodes.Remove(sm.pathNodes.Find(n => n.id == node.id));           break;
             }
 
-            sm.nodes.Remove(node);
+            sm.nodes.Remove(sm.nodes.Find(n => n.id == node.id));
+
             //RemoveRelatedConnections(node);
         }
 

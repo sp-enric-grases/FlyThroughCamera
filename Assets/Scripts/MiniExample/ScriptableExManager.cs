@@ -14,7 +14,7 @@ namespace QGM.ScriptableExample
 
     public class ScriptableExManager : MonoBehaviour
     {
-        public List<BaseNode> nodes;
+        public List<Node> nodes;
         public List<StartEndNode> startEndNodes;
         public List<PathNode> pathNodes;
         public List<Connection> connections;
