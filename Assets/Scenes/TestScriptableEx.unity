@@ -113,15 +113,15 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1018721724
+--- !u!1 &18963329
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1018721726}
-  - component: {fileID: 1018721725}
+  - component: {fileID: 18963331}
+  - component: {fileID: 18963330}
   m_Layer: 0
   m_Name: Start-end node
   m_TagString: Untagged
@@ -129,12 +129,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1018721725
+--- !u!114 &18963330
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1018721724}
+  m_GameObject: {fileID: 18963329}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ef7b4d77133a9f49a8f3a0912d4bc49, type: 3}
@@ -142,28 +142,185 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   offsetRotX: 0
   limitX: {x: 0, y: 360}
-  intLimitX: {x: 0, y: 0}
+  intLimitX: {x: -180, y: 180}
   offsetRotY: 0
   limitY: {x: -85, y: 85}
-  intLimitY: {x: 0, y: 0}
+  intLimitY: {x: -85, y: 85}
   sensibility: 2
   invertDirection: 0
   inertia: 1
   decelerationRate: 1
   a: {fileID: 0}
   b: {fileID: 0}
---- !u!4 &1018721726
+--- !u!4 &18963331
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1018721724}
+  m_GameObject: {fileID: 18963329}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &511081709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 511081711}
+  - component: {fileID: 511081710}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &511081710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 511081709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 776d32f8f64b487488f05900a9207e8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodes:
+  - id: 763548d056e937f4b98b00b388abd0f8
+    typeOfNode: 0
+  - id: 9083bcc1ed4db2f45b1c307487fffb46
+    typeOfNode: 0
+  - id: 815b3252be13eb84bb4d2b9471dc04e5
+    typeOfNode: 1
+  startEndNodes:
+  - id: 763548d056e937f4b98b00b388abd0f8
+    title: Start-End Node
+    typeOfNode: 0
+    windowRect:
+      serializedVersion: 2
+      x: 118
+      y: 167
+      width: 205
+      height: 80
+    node: {fileID: 18963330}
+    inPoint:
+      type: 0
+      oppositeConnection: 3
+    outPoint:
+      type: 1
+      oppositeConnection: 2
+  - id: 9083bcc1ed4db2f45b1c307487fffb46
+    title: Start-End Node
+    typeOfNode: 0
+    windowRect:
+      serializedVersion: 2
+      x: 189
+      y: 498
+      width: 205
+      height: 80
+    node: {fileID: 1872503982}
+    inPoint:
+      type: 0
+      oppositeConnection: 3
+    outPoint:
+      type: 1
+      oppositeConnection: 2
+  pathNodes:
+  - id: 815b3252be13eb84bb4d2b9471dc04e5
+    title: Path
+    typeOfNode: 1
+    windowRect:
+      serializedVersion: 2
+      x: 513
+      y: 167
+      width: 250
+      height: 150
+    node: {fileID: 1785109633}
+    cam: {fileID: 0}
+    timeToRelocate: 1
+    curveRelocation:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    pathDuration: 0
+    curvePath:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    inPoint:
+      type: 2
+      oppositeConnection: 1
+    outPoint:
+      type: 3
+      oppositeConnection: 0
+  connections:
+  - idIn: 815b3252be13eb84bb4d2b9471dc04e5
+    idOut: 763548d056e937f4b98b00b388abd0f8
+    inPoint:
+      type: 2
+      oppositeConnection: 1
+    outPoint:
+      type: 1
+      oppositeConnection: 2
+--- !u!4 &511081711
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 511081709}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1062937366
 GameObject:
@@ -242,16 +399,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1079741734
+--- !u!1 &1785109632
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1079741737}
-  - component: {fileID: 1079741736}
-  - component: {fileID: 1079741735}
+  - component: {fileID: 1785109635}
+  - component: {fileID: 1785109634}
+  - component: {fileID: 1785109633}
   m_Layer: 0
   m_Name: Path node
   m_TagString: Untagged
@@ -259,12 +416,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1079741735
+--- !u!114 &1785109633
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1079741734}
+  m_GameObject: {fileID: 1785109632}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 541a76f9c03874323b5154b14ac00427, type: 3}
@@ -351,12 +508,12 @@ MonoBehaviour:
   follow: 1
   refFollow: 1
   inf: []
---- !u!114 &1079741736
+--- !u!114 &1785109634
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1079741734}
+  m_GameObject: {fileID: 1785109632}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b154883273c2845f39445c8015d81639, type: 3}
@@ -371,419 +528,18 @@ MonoBehaviour:
   - {x: 3, y: 0, z: 0}
   - {x: 4, y: 0, z: 0}
   modes: 0000000000000000
---- !u!4 &1079741737
+--- !u!4 &1785109635
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1079741734}
+  m_GameObject: {fileID: 1785109632}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1178001204
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1178001206}
-  - component: {fileID: 1178001205}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1178001205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1178001204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 776d32f8f64b487488f05900a9207e8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  nodes:
-  - id: dca5c493744bc524cb8d44cb4bf6c177
-    typeOfNode: 1
-  - id: aa80e18578d567440baa29ebef3072e9
-    typeOfNode: 0
-  startEndNodes:
-  - id: aa80e18578d567440baa29ebef3072e9
-    title: Start-End Node
-    typeOfNode: 0
-    windowRect:
-      serializedVersion: 2
-      x: 199
-      y: 159
-      width: 205
-      height: 80
-    node: {fileID: 1309756461}
-    inPoint:
-      rect:
-        serializedVersion: 2
-        x: 189
-        y: 189
-        width: 10
-        height: 20
-      type: 0
-      oppositeConnection: 3
-    outPoint:
-      rect:
-        serializedVersion: 2
-        x: 404
-        y: 189
-        width: 10
-        height: 20
-      type: 1
-      oppositeConnection: 2
-  pathNodes:
-  - id: dca5c493744bc524cb8d44cb4bf6c177
-    title: Path
-    typeOfNode: 1
-    windowRect:
-      serializedVersion: 2
-      x: 159
-      y: 623
-      width: 250
-      height: 150
-    node: {fileID: 1079741735}
-    cam: {fileID: 0}
-    timeToRelocate: 1
-    curveRelocation:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    pathDuration: 0
-    curvePath:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    inPoint:
-      rect:
-        serializedVersion: 2
-        x: 149
-        y: 688
-        width: 10
-        height: 20
-      type: 2
-      oppositeConnection: 1
-    outPoint:
-      rect:
-        serializedVersion: 2
-        x: 409
-        y: 688
-        width: 10
-        height: 20
-      type: 3
-      oppositeConnection: 0
-  connections: []
---- !u!4 &1178001206
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1178001204}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1245793875
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1245793877}
-  - component: {fileID: 1245793876}
-  m_Layer: 0
-  m_Name: Start-end node
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1245793876
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1245793875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ef7b4d77133a9f49a8f3a0912d4bc49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetRotX: 0
-  limitX: {x: 0, y: 360}
-  intLimitX: {x: 0, y: 0}
-  offsetRotY: 0
-  limitY: {x: -85, y: 85}
-  intLimitY: {x: 0, y: 0}
-  sensibility: 2
-  invertDirection: 0
-  inertia: 1
-  decelerationRate: 1
-  a: {fileID: 0}
-  b: {fileID: 0}
---- !u!4 &1245793877
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1245793875}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1263996556
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1263996559}
-  - component: {fileID: 1263996558}
-  - component: {fileID: 1263996557}
-  m_Layer: 0
-  m_Name: Path node
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1263996557
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1263996556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 541a76f9c03874323b5154b14ac00427, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 0}
-  pathDuration: 0
-  curvePath:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  trigger: {fileID: 0}
-  timeToInitRelocatation: 1
-  curveInitRelocation:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  finalRotation: {x: 0, y: 0, z: 0}
-  timeToFinalRelocation: 1
-  curveFinalRelocation:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  follow: 1
-  refFollow: 1
-  inf: []
---- !u!114 &1263996558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1263996556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b154883273c2845f39445c8015d81639, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  showPath: 0
-  steps: 12
-  pathColor: {r: 0, g: 1, b: 1, a: 1}
-  points:
-  - {x: 1, y: 0, z: 0}
-  - {x: 2, y: 0, z: 0}
-  - {x: 3, y: 0, z: 0}
-  - {x: 4, y: 0, z: 0}
-  modes: 0000000000000000
---- !u!4 &1263996559
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1263996556}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1309756460
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1309756462}
-  - component: {fileID: 1309756461}
-  m_Layer: 0
-  m_Name: Start-end node
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1309756461
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1309756460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ef7b4d77133a9f49a8f3a0912d4bc49, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  offsetRotX: 0
-  limitX: {x: 0, y: 360}
-  intLimitX: {x: 0, y: 0}
-  offsetRotY: 0
-  limitY: {x: -85, y: 85}
-  intLimitY: {x: 0, y: 0}
-  sensibility: 2
-  invertDirection: 0
-  inertia: 1
-  decelerationRate: 1
-  a: {fileID: 0}
-  b: {fileID: 0}
---- !u!4 &1309756462
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1309756460}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1818798377
 GameObject:
@@ -851,15 +607,15 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1863803366
+--- !u!1 &1872503981
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1863803368}
-  - component: {fileID: 1863803367}
+  - component: {fileID: 1872503983}
+  - component: {fileID: 1872503982}
   m_Layer: 0
   m_Name: Start-end node
   m_TagString: Untagged
@@ -867,12 +623,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1863803367
+--- !u!114 &1872503982
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1863803366}
+  m_GameObject: {fileID: 1872503981}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2ef7b4d77133a9f49a8f3a0912d4bc49, type: 3}
@@ -890,16 +646,16 @@ MonoBehaviour:
   decelerationRate: 1
   a: {fileID: 0}
   b: {fileID: 0}
---- !u!4 &1863803368
+--- !u!4 &1872503983
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1863803366}
+  m_GameObject: {fileID: 1872503981}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

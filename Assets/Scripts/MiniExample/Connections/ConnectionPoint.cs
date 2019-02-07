@@ -10,11 +10,11 @@ namespace QGM.ScriptableExample
     public class ConnectionPoint
     {
         [NonSerialized] public BaseNode node;
-        public Rect rect;
+        [NonSerialized] public Rect rect;
         public ConnectionPointType type;
         public ConnectionPointType oppositeConnection;
         [NonSerialized] public GUIStyle style;
-        public Action<ConnectionPoint> OnClickConnectionPoint;
+        [NonSerialized] public Action<ConnectionPoint> OnClickConnectionPoint;
 
         public ConnectionPoint(BaseNode node, ConnectionPointType type, ConnectionPointType typeOut, Action<ConnectionPoint> OnClickConnectionPoint)
         {

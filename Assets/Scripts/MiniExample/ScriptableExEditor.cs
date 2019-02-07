@@ -30,7 +30,7 @@ namespace QGM.ScriptableExample
                 else
                 {
                     RecoveringNodes();
-                    //RecoveringConnections();
+                    RecoveringConnections();
                 }
             }
         }
@@ -63,18 +63,18 @@ namespace QGM.ScriptableExample
             }
         }
 
-        //private void RecoveringConnections()
-        //{
-        //    for (int i = 0; i < sm.connections.Count; i++)
-        //    {
-        //        sm.connections[i].CreateConnection
-        //            (
-        //            GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
-        //            GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
-        //            OnClickRemoveConnection, false
-        //            );
-        //    }
-        //}
+        private void RecoveringConnections()
+        {
+            for (int i = 0; i < sm.connections.Count; i++)
+            {
+                sm.connections[i].CreateConnection
+                    (
+                    GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
+                    GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
+                    OnClickRemoveConnection, false
+                    );
+            }
+        }
 
         private ConnectionPoint GetConnection(ConnectionPointType type, string id)
         {
@@ -82,6 +82,8 @@ namespace QGM.ScriptableExample
             {
                 case ConnectionPointType.NodeIn: return sm.startEndNodes.Find(i => i.id == id).inPoint;
                 case ConnectionPointType.NodeOut: return sm.startEndNodes.Find(i => i.id == id).outPoint;
+                case ConnectionPointType.PathIn: return sm.startEndNodes.Find(i => i.id == id).inPoint;
+                case ConnectionPointType.PathOut: return sm.startEndNodes.Find(i => i.id == id).outPoint;
                 default: return null;
             }
         }
@@ -142,13 +144,13 @@ namespace QGM.ScriptableExample
         {
             if (selectedInPoint != null && selectedOutPoint == null)
             {
-                Handles.DrawBezier (selectedInPoint.rect.center, e.mousePosition, selectedInPoint.rect.center + Vector2.left * 50f, e.mousePosition - Vector2.left * 50f, Color.white, null, 3f);
+                Handles.DrawBezier (selectedInPoint.rect.center, e.mousePosition, selectedInPoint.rect.center + Vector2.left * 50f, e.mousePosition - Vector2.left * 50f, Color.white, null, 4f);
                 GUI.changed = true;
             }
 
             if (selectedOutPoint != null && selectedInPoint == null)
             {
-                Handles.DrawBezier(selectedOutPoint.rect.center, e.mousePosition, selectedOutPoint.rect.center - Vector2.left * 50f, e.mousePosition + Vector2.left * 50f, Color.white, null, 3f);
+                Handles.DrawBezier(selectedOutPoint.rect.center, e.mousePosition, selectedOutPoint.rect.center - Vector2.left * 50f, e.mousePosition + Vector2.left * 50f, Color.white, null, 4f);
                 GUI.changed = true;
             }
         }
@@ -187,22 +189,12 @@ namespace QGM.ScriptableExample
             switch (e.type)
             {
                 case EventType.MouseDown:
-                    if (e.button == 0)
-                    {
-                        ClearConnectionSelection();
-                    }
-
-                    if (e.button == 1)
-                    {
-                        ProcessContextMenu(e.mousePosition);
-                    }
+                    if (e.button == 0) ClearConnectionSelection();
+                    if (e.button == 1) ProcessContextMenu(e.mousePosition);
                     break;
 
                 case EventType.MouseDrag:
-                    if (e.button == 0)
-                    {
-                        OnDrag(e.delta);
-                    }
+                    if (e.button == 0) OnDrag(e.delta);
                     break;
             }
         }
@@ -310,8 +302,7 @@ namespace QGM.ScriptableExample
             }
 
             sm.nodes.Remove(sm.nodes.Find(n => n.id == node.id));
-
-            //RemoveRelatedConnections(node);
+            RemoveRelatedConnections(node);
         }
 
         private void RemoveRelatedConnections(BaseNode node)
