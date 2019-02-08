@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using SocialPoint.Tools;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace SocialPoint.Tools
+namespace QGM.FlyThrougCamera
 {
     [CustomEditor(typeof(Influencer))]
     public class InfluencerInspector : BoxLayoutInspector

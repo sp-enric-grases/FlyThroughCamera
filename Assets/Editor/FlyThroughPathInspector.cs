@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using SocialPoint.Tools;
 
-namespace SocialPoint.Tools
+namespace QGM.FlyThrougCamera
 {
     [CustomEditor(typeof(FlyThroughPath))]
     public class FlyThroughPathInspector : BoxLayoutInspector
