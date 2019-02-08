@@ -4,14 +4,16 @@ using UnityEngine;
 
 namespace QGM.ScriptableExample
 {
+    public enum ConnectionIO { In, Out}
+
     [Serializable]
     public class Connection
     {
         public string idIn;
         public string idOut;
-        //[HideInInspector]
+        [HideInInspector]
         public ConnectionPoint inPoint;
-        //[HideInInspector]
+        [HideInInspector]
         public ConnectionPoint outPoint;
         [NonSerialized] public Action<Connection> OnClickRemoveConnection;
 

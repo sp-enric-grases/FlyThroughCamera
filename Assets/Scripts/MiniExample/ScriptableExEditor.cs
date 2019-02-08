@@ -68,23 +68,35 @@ namespace QGM.ScriptableExample
             for (int i = 0; i < sm.connections.Count; i++)
             {
                 sm.connections[i].CreateConnection
-                    (
-                    GetConnection(ConnectionPointType.NodeIn, sm.connections[i].idIn),
-                    GetConnection(ConnectionPointType.NodeOut, sm.connections[i].idOut),
-                    OnClickRemoveConnection, false
-                    );
+                (
+                GetConnection(ConnectionIO.In, sm.connections[i].idIn),
+                GetConnection(ConnectionIO.Out, sm.connections[i].idOut),
+                OnClickRemoveConnection, false
+                );
             }
         }
 
-        private ConnectionPoint GetConnection(ConnectionPointType type, string id)
+        private ConnectionPoint GetConnection(ConnectionIO inOut, string idIn)
         {
-            switch (type)
+            TypeOfNode connectionPoint = sm.nodes.Find(n => n.id == idIn).typeOfNode;
+
+            if (inOut == ConnectionIO.In)
             {
-                case ConnectionPointType.NodeIn: return sm.startEndNodes.Find(i => i.id == id).inPoint;
-                case ConnectionPointType.NodeOut: return sm.startEndNodes.Find(i => i.id == id).outPoint;
-                case ConnectionPointType.PathIn: return sm.startEndNodes.Find(i => i.id == id).inPoint;
-                case ConnectionPointType.PathOut: return sm.startEndNodes.Find(i => i.id == id).outPoint;
-                default: return null;
+                switch (connectionPoint)
+                {
+                    case TypeOfNode.StartEnd:   return sm.startEndNodes.Find(n => n.id == idIn).inPoint;
+                    case TypeOfNode.Path:       return sm.pathNodes.Find(n => n.id == idIn).inPoint;
+                    default:                    return null;
+                }
+            }
+            else
+            {
+                switch (connectionPoint)
+                {
+                    case TypeOfNode.StartEnd:   return sm.startEndNodes.Find(n => n.id == idIn).outPoint;
+                    case TypeOfNode.Path:       return sm.pathNodes.Find(n => n.id == idIn).outPoint;
+                    default:                    return null;
+                }
             }
         }
 

@@ -33,8 +33,8 @@ namespace QGM.ScriptableExample
             else
                 Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
 
-            inPoint = new ConnectionPoint(this, ConnectionPointType.NodeIn, ConnectionPointType.PathOut, OnClickInPoint);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.NodeOut, ConnectionPointType.PathIn, OnClickOutPoint);
+            inPoint = new ConnectionPoint(this, TypeOfConnection.NodeIn, TypeOfConnection.PathOut, OnClickInPoint);
+            outPoint = new ConnectionPoint(this, TypeOfConnection.NodeOut, TypeOfConnection.PathIn, OnClickOutPoint);
         }
 
         public override void DrawNodes()
