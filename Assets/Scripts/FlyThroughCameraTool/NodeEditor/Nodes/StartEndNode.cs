@@ -14,7 +14,7 @@ namespace QGM.FlyThrougCamera
 
         public StartEndNode(Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint)
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new start-end node");
+            //Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new start-end node");
 
             windowRect = rect;
             this.typeOfNode = typeOfNode;
@@ -28,10 +28,10 @@ namespace QGM.FlyThrougCamera
 
         public void CreateConnections(Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint, bool newConnections)
         {
-            if (newConnections)
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
-            else
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
+            //if (newConnections)
+            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
+            //else
+            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
 
             inPoint = new ConnectionPoint(this, TypeOfConnection.NodeIn, TypeOfConnection.PathOut, OnClickInPoint);
             outPoint = new ConnectionPoint(this, TypeOfConnection.NodeOut, TypeOfConnection.PathIn, OnClickOutPoint);
@@ -39,7 +39,7 @@ namespace QGM.FlyThrougCamera
 
         public override void DrawNodes()
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Start-End connections");
+            //Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Start-End connections");
 
             inPoint.Draw();
             outPoint.Draw();

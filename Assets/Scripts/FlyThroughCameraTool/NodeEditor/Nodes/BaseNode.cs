@@ -25,7 +25,7 @@ namespace QGM.FlyThrougCamera
 
         public void OnClickRemoveNodeEvent (Action<BaseNode> OnClickRemoveNode)
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering an existing node");
+            //Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering an existing node");
             OnRemoveNode = OnClickRemoveNode;
         }
 
@@ -40,6 +40,10 @@ namespace QGM.FlyThrougCamera
         }
 
         public virtual void DrawWindow() { }
+
+        public virtual void LinkConnection(ConnectionIO connection, string id) { }
+
+        public virtual void UnlinkConnection(ConnectionIO connection) { }
 
         public bool ProcessEvents(Event e)
         {

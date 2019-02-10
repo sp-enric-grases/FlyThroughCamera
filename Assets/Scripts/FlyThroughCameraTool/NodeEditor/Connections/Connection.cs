@@ -27,14 +27,17 @@ namespace QGM.FlyThrougCamera
 
         public void CreateConnection(ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> OnClickRemoveConnection, bool isNew)
         {
-            if (isNew)
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating connection between nodes");
-            else
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering connection between nodes");
+            //if (isNew)
+            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Creating connection between nodes");
+            //else
+            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering connection between nodes");
 
             this.inPoint = inPoint;
             this.outPoint = outPoint;
             this.OnClickRemoveConnection = OnClickRemoveConnection;
+
+            inPoint.LinkConnection(ConnectionIO.In, idIn);
+            outPoint.LinkConnection(ConnectionIO.Out, idOut);
         }
 
         public void Draw()
@@ -49,10 +52,14 @@ namespace QGM.FlyThrougCamera
                 2f
             );
 
-            if (Handles.Button((inPoint.rect.center + outPoint.rect.center) * 0.5f, Quaternion.identity, 4, 8, Handles.RectangleCap))
+            if (Handles.Button((inPoint.rect.center + outPoint.rect.center) * 0.5f, Quaternion.identity, 4, 8, Handles.RectangleHandleCap))
             {
                 if (OnClickRemoveConnection != null)
+                {
                     OnClickRemoveConnection(this);
+                    inPoint.UnlinkConnection(ConnectionIO.In);
+                    outPoint.UnlinkConnection(ConnectionIO.Out);
+                }
             }
         }
     }

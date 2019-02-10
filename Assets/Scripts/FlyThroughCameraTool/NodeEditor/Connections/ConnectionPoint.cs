@@ -54,6 +54,16 @@ namespace QGM.FlyThrougCamera
             return oppositeConnection;
         }
 
+        public void LinkConnection(ConnectionIO connection, string id)
+        {
+            node.LinkConnection(connection, id);
+        }
+
+        public void UnlinkConnection(ConnectionIO connection)
+        {
+            node.UnlinkConnection(connection);
+        }
+
         public void Draw()
         {
             rect.y = node.windowRect.y + (node.windowRect.height * 0.5f) - rect.height * 0.5f;
@@ -75,8 +85,8 @@ namespace QGM.FlyThrougCamera
             {
                 if (OnClickConnectionPoint != null)
                     OnClickConnectionPoint(this);
-                else
-                    Debug.Log("<color=red>[FLY-TROUGH]</color> OnClickConnectionPoint == NULL");
+                //else
+                //    Debug.Log("<color=red>[FLY-TROUGH]</color> OnClickConnectionPoint == NULL");
             }
         }
     }

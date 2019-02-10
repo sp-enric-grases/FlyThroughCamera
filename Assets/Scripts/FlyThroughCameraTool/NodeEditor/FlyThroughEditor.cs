@@ -269,8 +269,8 @@ namespace QGM.FlyThrougCamera
 
                 ClearConnectionSelection();
             }
-            else
-                Debug.Log("<color=red>[FLY-TROUGH]</color> selectedOutPoint == NULL");
+            //else
+            //    Debug.Log("<color=red>[FLY-TROUGH]</color> selectedOutPoint == NULL");
         }
 
         private void OnClickOutPoint(ConnectionPoint outPoint)
@@ -284,8 +284,8 @@ namespace QGM.FlyThrougCamera
 
                 ClearConnectionSelection();
             }
-            else
-                Debug.Log("<color=red>[FLY-TROUGH]</color> selectedInPoint == NULL");
+            //else
+            //    Debug.Log("<color=red>[FLY-TROUGH]</color> selectedInPoint == NULL");
         }
 
         private void CreateConnection()

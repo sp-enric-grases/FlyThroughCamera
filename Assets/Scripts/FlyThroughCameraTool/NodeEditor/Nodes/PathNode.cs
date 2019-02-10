@@ -17,11 +17,12 @@ namespace QGM.FlyThrougCamera
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
-        public Vector3 startPoint, endPoint;
+        public string idIn = string.Empty;
+        public string idOut = string.Empty;
 
         public PathNode(Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint)
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new path node");
+            //Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new path node");
 
             windowRect = rect;
             this.typeOfNode = typeOfNode;
@@ -35,10 +36,10 @@ namespace QGM.FlyThrougCamera
 
         public void CreateConnections(Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint, bool newConnections)
         {
-            if (newConnections)
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
-            else
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
+            //if (newConnections)
+            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
+            //else
+            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
 
             inPoint = new ConnectionPoint(this, TypeOfConnection.PathIn, TypeOfConnection.NodeOut, OnClickInPoint);
             outPoint = new ConnectionPoint(this, TypeOfConnection.PathOut, TypeOfConnection.NodeIn, OnClickOutPoint);
@@ -47,17 +48,24 @@ namespace QGM.FlyThrougCamera
 
         public void CheckIfBothPointsAreConnected()
         {
-            if (inPoint != null && outPoint != null)
-                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
-            else
+            if (idIn != "" && idOut != "")
             {
-                Debug.Log("<color=orange>[FLY-TROUGH]</color> One connection is missing");
+                Debug.Log("<color=green>[FLY-TROUGH]</color> PATH is connected!!");
+
+
+
             }
+            else if (idIn != "" && idOut == "" || idIn == "" && idOut != "")
+            {
+                Debug.Log("<color=orange>[FLY-TROUGH]</color> One connection is missing...");
+            }
+            else
+                Debug.Log("<color=orange>[FLY-TROUGH]</color> There are no connections in PATH");
         }
 
         public override void DrawNodes()
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Path connections");
+            //Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Path connections");
             inPoint.Draw();
             outPoint.Draw();
         }
@@ -70,6 +78,34 @@ namespace QGM.FlyThrougCamera
             curveRelocation = EditorGUILayout.CurveField("Relocation ", curveRelocation);
             pathDuration = EditorGUILayout.FloatField("Path duration time", pathDuration);
             curvePath = EditorGUILayout.CurveField("Curve path", curvePath);
+        }
+
+        public override void LinkConnection(ConnectionIO connection, string id)
+        {
+            if (connection == ConnectionIO.In)  idIn = id;
+            if (connection == ConnectionIO.Out) idOut = id;
+
+            Debug.Log("Connection IN created to " + idIn);
+            Debug.Log("Connection OUT created to " + idOut);
+
+            CheckIfBothPointsAreConnected();
+        }
+
+        public override void UnlinkConnection(ConnectionIO connection)
+        {
+            if (connection == ConnectionIO.In)
+            {
+                idIn = "";
+                Debug.Log("Unlinking connection IN");
+            }
+
+            if (connection == ConnectionIO.Out) idOut = "";
+            {
+                idOut = "";
+                Debug.Log("Unlinking connection OUT");
+            }
+
+            CheckIfBothPointsAreConnected();
         }
 
         private void CreatePathNode()
