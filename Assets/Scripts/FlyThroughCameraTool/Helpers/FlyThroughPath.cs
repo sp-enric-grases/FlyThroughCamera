@@ -9,6 +9,7 @@ namespace QGM.FlyThrougCamera
     public class FlyThroughPath : MonoBehaviour
     {
         public event SplineFinishedHandler SplineFinishedEvent;
+        public Vector3 startPoint, endPoint;
 
         public Camera cam;
         public float pathDuration;

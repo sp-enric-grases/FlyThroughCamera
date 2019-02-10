@@ -17,6 +17,8 @@ namespace QGM.FlyThrougCamera
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
 
+        public Vector3 startPoint, endPoint;
+
         public PathNode(Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint)
         {
             Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new path node");
@@ -40,6 +42,17 @@ namespace QGM.FlyThrougCamera
 
             inPoint = new ConnectionPoint(this, TypeOfConnection.PathIn, TypeOfConnection.NodeOut, OnClickInPoint);
             outPoint = new ConnectionPoint(this, TypeOfConnection.PathOut, TypeOfConnection.NodeIn, OnClickOutPoint);
+
+        }
+
+        public void CheckIfBothPointsAreConnected()
+        {
+            if (inPoint != null && outPoint != null)
+                Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
+            else
+            {
+                Debug.Log("<color=orange>[FLY-TROUGH]</color> One connection is missing");
+            }
         }
 
         public override void DrawNodes()

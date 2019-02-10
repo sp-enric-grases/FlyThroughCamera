@@ -45,13 +45,13 @@ namespace QGM.FlyThrougCamera
             Header("Star-End Path Nodes");
 
             spline.startNodePosition = EditorGUILayout.Vector3Field("Start Node Position", spline.startNodePosition);
-            spline.SetControlPoint(0, spline.startNodePosition);
-            //Vector3 v1 = spline.startNodePosition;
-            //GUILayout.Label(string.Format("Start Node Position\tx:{0:0.000}   y:{1:0.000}   z:{2:0.000}", v1.x, v1.y, v1.z));
+            //spline.SetControlPoint(0, spline.startNodePosition);
+            Vector3 v1 = spline.startNodePosition;
+            GUILayout.Label(string.Format("Start Node Position\tx:{0:0.000}   y:{1:0.000}   z:{2:0.000}", v1.x, v1.y, v1.z));
             spline.endNodePosition = EditorGUILayout.Vector3Field("Start Node Position", spline.endNodePosition);
-            spline.SetControlPoint(spline.points.Count - 1, spline.endNodePosition);
-            //Vector3 v2 = spline.endNodePosition;
-            //GUILayout.Label(string.Format("End Node Position\tx:{0:0.000}   y:{1:0.000}   z:{2:0.000}", v2.x, v2.y, v2.z));
+            //spline.SetControlPoint(spline.points.Count - 1, spline.endNodePosition);
+            Vector3 v2 = spline.endNodePosition;
+            GUILayout.Label(string.Format("End Node Position\tx:{0:0.000}   y:{1:0.000}   z:{2:0.000}", v2.x, v2.y, v2.z));
 
             Footer();
         }
