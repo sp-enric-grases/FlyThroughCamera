@@ -9,10 +9,9 @@ namespace QGM.FlyThrougCamera
     public class FlyThroughPath : MonoBehaviour
     {
         public event SplineFinishedHandler SplineFinishedEvent;
-        public Vector3 startPoint, endPoint;
 
         public Camera cam;
-        public float pathDuration;
+        public float pathDuration = 3;
         public AnimationCurve curvePath = AnimationCurve.EaseInOut(0, 0, 1, 1);
         public Collider trigger;
 
@@ -20,7 +19,7 @@ namespace QGM.FlyThrougCamera
         public AnimationCurve curveInitRelocation = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
         public Vector3 finalRotation = Vector3.zero;
-        public float timeToFinalRelocation = 1;
+        public float timeToFinalRelocation = 0.5f;
         public AnimationCurve curveFinalRelocation = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
         public bool follow = true;
@@ -42,9 +41,8 @@ namespace QGM.FlyThrougCamera
 
         private void Start()
         {
-            spline = gameObject.GetComponent<BezierSpline>();
             //reference = new GameObject();
-            
+
             foreach (var item in inf)
             {
                 if (item != null && item.enableInfluencer)
@@ -64,9 +62,18 @@ namespace QGM.FlyThrougCamera
             CreateFinalReference();
         }
 
+        public void Init(Vector3 startPoint, Vector3 endPoint)
+        {
+            spline = gameObject.GetComponent<BezierSpline>();
+            spline.startNode = startPoint;
+            spline.endNode = endPoint;
+            spline.Reset();
+        }
+
         private void  CreateFinalReference()
         {
             finalReference = new GameObject();//  GameObject.CreatePrimitive(PrimitiveType.Cube);
+            finalReference.name = string.Format("{0}_FINAL_REF", gameObject.name);
             finalReference.transform.position = spline.GetControlPoint(spline.ControlPointCount - 1) + spline.transform.position;
             finalReference.transform.rotation = spline.transform.rotation * Quaternion.Euler(finalRotation);
         }
@@ -76,6 +83,7 @@ namespace QGM.FlyThrougCamera
             startMovement = true;
             cam.GetComponent<CameraRotation>().enabled = false;
             reference = new GameObject();//  GameObject.CreatePrimitive(PrimitiveType.Cube);
+            reference.name = string.Format("{0}_REF", gameObject.name);
             cam.gameObject.AddComponent<InfluencerDetection>().Init(this, reference);
         }
 
@@ -185,7 +193,5 @@ namespace QGM.FlyThrougCamera
             r.useGravity = false;
             r.isKinematic = true;
         }
-
-
     }
 }

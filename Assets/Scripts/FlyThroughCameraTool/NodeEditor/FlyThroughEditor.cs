@@ -10,7 +10,7 @@ namespace QGM.FlyThrougCamera
     public class FlyThroughEditor : EditorWindow
     {
         private GameObject selectedObject;
-        private FlyThroughManager sm;
+        private FlyThroughManager ft;
         private Vector2 offset;
         private Vector2 drag;
 
@@ -23,9 +23,9 @@ namespace QGM.FlyThrougCamera
 
             if (selectedObject != null)
             {
-                sm = selectedObject.GetComponent<FlyThroughManager>();
+                ft = selectedObject.GetComponent<FlyThroughManager>();
 
-                if (sm.nodes == null)
+                if (ft.nodes == null)
                     InitNodeLists();
                 else
                 {
@@ -37,26 +37,26 @@ namespace QGM.FlyThrougCamera
 
         private void InitNodeLists()
         {
-            sm.nodes = new List<Node>();
-            sm.startEndNodes = new List<StartEndNode>();
-            sm.pathNodes = new List<PathNode>();
-            sm.connections = new List<Connection>();
+            ft.nodes = new List<Node>();
+            ft.startEndNodes = new List<StartEndNode>();
+            ft.pathNodes = new List<PathNode>();
+            ft.connections = new List<Connection>();
         }
 
         private void RecoveringNodes()
         {
-            for (int id = 0; id < sm.nodes.Count; id++)
+            for (int id = 0; id < ft.nodes.Count; id++)
             {
-                switch (sm.nodes[id].typeOfNode)
+                switch (ft.nodes[id].typeOfNode)
                 {
                     case TypeOfNode.StartEnd:
-                        StartEndNode sen = sm.startEndNodes.Find(n => n.id == sm.nodes[id].id);
-                        sen.CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                        StartEndNode sen = ft.startEndNodes.Find(n => n.id == ft.nodes[id].id);
+                        sen.CreateConnections(ft, OnClickInPoint, OnClickOutPoint, false);
                         sen.OnClickRemoveNodeEvent(OnClickRemoveNode);
                         break;
                     case TypeOfNode.Path:
-                        PathNode pn = sm.pathNodes.Find(n => n.id == sm.nodes[id].id);
-                        pn.CreateConnections(OnClickInPoint, OnClickOutPoint, false);
+                        PathNode pn = ft.pathNodes.Find(n => n.id == ft.nodes[id].id);
+                        pn.CreateConnections(ft, OnClickInPoint, OnClickOutPoint, false);
                         pn.OnClickRemoveNodeEvent(OnClickRemoveNode);
                         break;
                 }
@@ -65,27 +65,27 @@ namespace QGM.FlyThrougCamera
 
         private void RecoveringConnections()
         {
-            for (int i = 0; i < sm.connections.Count; i++)
+            for (int i = 0; i < ft.connections.Count; i++)
             {
-                sm.connections[i].CreateConnection
+                ft.connections[i].CreateConnection
                 (
-                GetConnection(ConnectionIO.In, sm.connections[i].idIn),
-                GetConnection(ConnectionIO.Out, sm.connections[i].idOut),
-                OnClickRemoveConnection, false
+                    GetConnection(ConnectionIO.Out, ft.connections[i].idOut),
+                    GetConnection(ConnectionIO.In, ft.connections[i].idIn),
+                    OnClickRemoveConnection, false
                 );
             }
         }
 
         private ConnectionPoint GetConnection(ConnectionIO inOut, string idIn)
         {
-            TypeOfNode connectionPoint = sm.nodes.Find(n => n.id == idIn).typeOfNode;
+            TypeOfNode connectionPoint = ft.nodes.Find(n => n.id == idIn).typeOfNode;
 
             if (inOut == ConnectionIO.In)
             {
                 switch (connectionPoint)
                 {
-                    case TypeOfNode.StartEnd:   return sm.startEndNodes.Find(n => n.id == idIn).inPoint;
-                    case TypeOfNode.Path:       return sm.pathNodes.Find(n => n.id == idIn).inPoint;
+                    case TypeOfNode.StartEnd:   return ft.startEndNodes.Find(n => n.id == idIn).inPoint;
+                    case TypeOfNode.Path:       return ft.pathNodes.Find(n => n.id == idIn).inPoint;
                     default:                    return null;
                 }
             }
@@ -93,8 +93,8 @@ namespace QGM.FlyThrougCamera
             {
                 switch (connectionPoint)
                 {
-                    case TypeOfNode.StartEnd:   return sm.startEndNodes.Find(n => n.id == idIn).outPoint;
-                    case TypeOfNode.Path:       return sm.pathNodes.Find(n => n.id == idIn).outPoint;
+                    case TypeOfNode.StartEnd:   return ft.startEndNodes.Find(n => n.id == idIn).outPoint;
+                    case TypeOfNode.Path:       return ft.pathNodes.Find(n => n.id == idIn).outPoint;
                     default:                    return null;
                 }
             }
@@ -124,17 +124,17 @@ namespace QGM.FlyThrougCamera
         {
             BeginWindows();
 
-            for (int id = 0; id < sm.nodes.Count; id++)
+            for (int id = 0; id < ft.nodes.Count; id++)
             {
-                switch (sm.nodes[id].typeOfNode)
+                switch (ft.nodes[id].typeOfNode)
                 {
                     case TypeOfNode.StartEnd:
-                        StartEndNode sen = sm.startEndNodes.Find(n => n.id == sm.nodes[id].id);
+                        StartEndNode sen = ft.startEndNodes.Find(n => n.id == ft.nodes[id].id);
                         sen.windowRect = GUI.Window(id, sen.windowRect, DrawNodeList, sen.title);
                         sen.DrawNodes();
                         break;
                     case TypeOfNode.Path:
-                        PathNode pn = sm.pathNodes.Find(n => n.id == sm.nodes[id].id);
+                        PathNode pn = ft.pathNodes.Find(n => n.id == ft.nodes[id].id);
                         pn.windowRect = GUI.Window(id, pn.windowRect, DrawNodeList, pn.title);
                         pn.DrawNodes();
                         break;
@@ -146,33 +146,33 @@ namespace QGM.FlyThrougCamera
 
         private void DrawConnections()
         {
-            if (sm.connections == null) return;
+            if (ft.connections == null) return;
 
-            for (int i = 0; i < sm.connections.Count; i++)
-                sm.connections[i].Draw();
+            for (int i = 0; i < ft.connections.Count; i++)
+                ft.connections[i].Draw();
         }
 
         private void DrawConnectionLine(Event e)
         {
             if (selectedInPoint != null && selectedOutPoint == null)
             {
-                Handles.DrawBezier (selectedInPoint.rect.center, e.mousePosition, selectedInPoint.rect.center + Vector2.left * 50f, e.mousePosition - Vector2.left * 50f, Color.white, null, 4f);
+                Handles.DrawBezier (selectedInPoint.rect.center, e.mousePosition, selectedInPoint.rect.center - Vector2.left * 50f, e.mousePosition + Vector2.left * 50f, Color.black, null, 4f);
                 GUI.changed = true;
             }
 
             if (selectedOutPoint != null && selectedInPoint == null)
             {
-                Handles.DrawBezier(selectedOutPoint.rect.center, e.mousePosition, selectedOutPoint.rect.center - Vector2.left * 50f, e.mousePosition + Vector2.left * 50f, Color.white, null, 4f);
+                Handles.DrawBezier(selectedOutPoint.rect.center, e.mousePosition, selectedOutPoint.rect.center + Vector2.left * 50f, e.mousePosition - Vector2.left * 50f, Color.black, null, 4f);
                 GUI.changed = true;
             }
         }
 
         void DrawNodeList(int id)
         {
-            switch (sm.nodes[id].typeOfNode)
+            switch (ft.nodes[id].typeOfNode)
             {
-                case TypeOfNode.StartEnd:   sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).DrawWindow();   break;
-                case TypeOfNode.Path:       sm.pathNodes.Find(n => n.id == sm.nodes[id].id).DrawWindow();       break;
+                case TypeOfNode.StartEnd:   ft.startEndNodes.Find(n => n.id == ft.nodes[id].id).DrawWindow();   break;
+                case TypeOfNode.Path:       ft.pathNodes.Find(n => n.id == ft.nodes[id].id).DrawWindow();       break;
             }
 
             GUI.DragWindow();
@@ -180,14 +180,14 @@ namespace QGM.FlyThrougCamera
 
         private void ProcessNodeEvents(Event e)
         {
-            for (int id = 0; id < sm.nodes.Count; id++)
+            for (int id = 0; id < ft.nodes.Count; id++)
             {
                 bool guiChanged = false;
 
-                switch (sm.nodes[id].typeOfNode)
+                switch (ft.nodes[id].typeOfNode)
                 {
-                    case TypeOfNode.StartEnd:   guiChanged = sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).ProcessEvents(e); break;
-                    case TypeOfNode.Path:       guiChanged = sm.pathNodes.Find(n => n.id == sm.nodes[id].id).ProcessEvents(e);     break;
+                    case TypeOfNode.StartEnd:   guiChanged = ft.startEndNodes.Find(n => n.id == ft.nodes[id].id).ProcessEvents(e); break;
+                    case TypeOfNode.Path:       guiChanged = ft.pathNodes.Find(n => n.id == ft.nodes[id].id).ProcessEvents(e);     break;
                 }
 
                 if (guiChanged) GUI.changed = true;
@@ -215,12 +215,12 @@ namespace QGM.FlyThrougCamera
         {
             drag = delta;
 
-            for (int id = 0; id < sm.nodes.Count; id++)
+            for (int id = 0; id < ft.nodes.Count; id++)
             {
-                switch (sm.nodes[id].typeOfNode)
+                switch (ft.nodes[id].typeOfNode)
                 {
-                    case TypeOfNode.StartEnd:   sm.startEndNodes.Find(n => n.id == sm.nodes[id].id).Drag(delta);    break;
-                    case TypeOfNode.Path:       sm.pathNodes.Find(n => n.id == sm.nodes[id].id).Drag(delta);        break;
+                    case TypeOfNode.StartEnd:   ft.startEndNodes.Find(n => n.id == ft.nodes[id].id).Drag(delta);    break;
+                    case TypeOfNode.Path:       ft.pathNodes.Find(n => n.id == ft.nodes[id].id).Drag(delta);        break;
                 }
             }
 
@@ -238,24 +238,25 @@ namespace QGM.FlyThrougCamera
         private void OnClickAddStartEndNode(Vector2 mousePosition)
         {
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
-            StartEndNode node = new StartEndNode(rect, GUID.Generate().ToString(), "Start-End Node", TypeOfNode.StartEnd, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
+            StartEndNode node = new StartEndNode
+                (ft, rect, GUID.Generate().ToString(), "Start-End Node", TypeOfNode.StartEnd, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
             AddNode(node.id, node.typeOfNode);
-            sm.startEndNodes.Add(node);
+            ft.startEndNodes.Add(node);
         }
 
         private void OnClickAddPath(Vector2 mousePosition)
         {
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 250, 150);
-            PathNode node = new PathNode(rect, GUID.Generate().ToString(), "Path", TypeOfNode.Path, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
+            PathNode node = new PathNode(ft, rect, GUID.Generate().ToString(), "Path", TypeOfNode.Path, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
             AddNode(node.id, node.typeOfNode);
-            sm.pathNodes.Add(node);
+            ft.pathNodes.Add(node);
         }
 
         private void AddNode(string id, TypeOfNode typeOfNode)
         {
-            sm.nodes.Add(new Node() { id = id, typeOfNode = typeOfNode });
+            ft.nodes.Add(new Node() { id = id, typeOfNode = typeOfNode });
         }
 
         private void OnClickInPoint(ConnectionPoint inPoint)
@@ -264,13 +265,11 @@ namespace QGM.FlyThrougCamera
 
             if (selectedOutPoint != null)
             {
-                if (selectedInPoint.GetOppositeConnection() == selectedOutPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
+                if (selectedInPoint.GetOppositeConnection() == selectedOutPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id && ConnectionNotExist())
                     CreateConnection();
 
                 ClearConnectionSelection();
             }
-            //else
-            //    Debug.Log("<color=red>[FLY-TROUGH]</color> selectedOutPoint == NULL");
         }
 
         private void OnClickOutPoint(ConnectionPoint outPoint)
@@ -279,19 +278,28 @@ namespace QGM.FlyThrougCamera
 
             if (selectedInPoint != null)
             {
-                if (selectedOutPoint.GetOppositeConnection() == selectedInPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id)
+                if (selectedOutPoint.GetOppositeConnection() == selectedInPoint.type && selectedInPoint.node.id != selectedOutPoint.node.id && ConnectionNotExist())
                     CreateConnection();
 
                 ClearConnectionSelection();
             }
-            //else
-            //    Debug.Log("<color=red>[FLY-TROUGH]</color> selectedInPoint == NULL");
+        }
+
+        private bool ConnectionNotExist()
+        {
+            for (int c = 0; c < ft.connections.Count; c++)
+            {
+                if (ft.connections[c].idOut == selectedOutPoint.node.id && ft.connections[c].idIn == selectedInPoint.node.id ||
+                    ft.connections[c].idIn == selectedOutPoint.node.id && ft.connections[c].idOut == selectedInPoint.node.id)
+                    return false;
+            }
+
+            return true;
         }
 
         private void CreateConnection()
         {
-            // We need to check first if the connection exists (this feature is missing!!)
-            sm.connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection, true));
+            ft.connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection, true));
         }
 
         private void ClearConnectionSelection()
@@ -302,27 +310,38 @@ namespace QGM.FlyThrougCamera
 
         private void OnClickRemoveConnection(Connection connection)
         {
-            sm.connections.Remove(connection);
+            ft.connections.Remove(connection);
         }
 
         private void OnClickRemoveNode(BaseNode node)
         {
             switch (node.typeOfNode)
             {
-                case TypeOfNode.StartEnd:   sm.startEndNodes.Remove(sm.startEndNodes.Find(n => n.id == node.id));   break;
-                case TypeOfNode.Path:       sm.pathNodes.Remove(sm.pathNodes.Find(n => n.id == node.id));           break;
+                case TypeOfNode.StartEnd:
+                    DestroyImmediate(ft.startEndNodes.Find(n => n.id == node.id).node);
+                    ft.startEndNodes.Remove(ft.startEndNodes.Find(n => n.id == node.id));
+                    break;
+                case TypeOfNode.Path:
+                    DestroyImmediate(ft.pathNodes.Find(n => n.id == node.id).node);
+                    ft.pathNodes.Remove(ft.pathNodes.Find(n => n.id == node.id));
+                    break;
             }
 
-            sm.nodes.Remove(sm.nodes.Find(n => n.id == node.id));
+            ft.nodes.Remove(ft.nodes.Find(n => n.id == node.id));
             RemoveRelatedConnections(node);
         }
 
         private void RemoveRelatedConnections(BaseNode node)
         {
-            foreach (var item in sm.connections.ToList())
+            List<Connection> connections = ft.connections.ToList();
+
+            for (int i = 0; i < connections.Count; i++)
             {
-                if (item.idIn == node.id || item.idOut == node.id)
-                    sm.connections.Remove(item);
+                if (connections[i].idIn == node.id || connections[i].idOut == node.id)
+                {
+                    ft.connections[i].UnlinkConnections();
+                    ft.connections.Remove(connections[i]);
+                }
             }
         }
 

@@ -8,59 +8,71 @@ namespace QGM.FlyThrougCamera
     [Serializable]
     public class StartEndNode : BaseNode
     {
-        public CameraRotation node;
-        public ConnectionPoint inPoint;
+        public CameraRotation cr;
+        public PathConnections paths;
         public ConnectionPoint outPoint;
+        public ConnectionPoint inPoint;
 
-        public StartEndNode(Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint)
+        public StartEndNode(FlyThroughManager ft, Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickOutPoint, Action<ConnectionPoint> OnClickInPoint)
         {
-            //Debug.Log("<color=green>[FLY-TROUGH]</color> Creating a new start-end node");
-
             windowRect = rect;
             this.typeOfNode = typeOfNode;
             OnRemoveNode = OnClickRemoveNode;
             this.id = id;
             this.title = title;     
 
-            CreateConnections(OnClickInPoint, OnClickOutPoint, true);
+            CreateConnections(ft, OnClickOutPoint, OnClickInPoint, true);
             CreateStartEndNode();
         }
 
-        public void CreateConnections(Action<ConnectionPoint> OnClickInPoint, Action<ConnectionPoint> OnClickOutPoint, bool newConnections)
+        public void CreateConnections(FlyThroughManager ft, Action<ConnectionPoint> OnClickOutPoint, Action<ConnectionPoint> OnClickInPoint, bool newConnections)
         {
-            //if (newConnections)
-            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Creating two new connections");
-            //else
-            //    Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering existing connections");
-
-            inPoint = new ConnectionPoint(this, TypeOfConnection.NodeIn, TypeOfConnection.PathOut, OnClickInPoint);
+            this.ft = ft;
             outPoint = new ConnectionPoint(this, TypeOfConnection.NodeOut, TypeOfConnection.PathIn, OnClickOutPoint);
+            inPoint = new ConnectionPoint(this, TypeOfConnection.NodeIn, TypeOfConnection.PathOut, OnClickInPoint);
         }
 
         public override void DrawNodes()
         {
-            //Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing Start-End connections");
-
             inPoint.Draw();
             outPoint.Draw();
         }
 
         public override void DrawWindow()
         {
-            EditorGUIUtility.labelWidth = 60;
-            node = EditorGUILayout.ObjectField("Node", node, typeof(CameraRotation), true) as CameraRotation;
+            base.DrawNodes();
 
-            if (node != null)
-                node.transform.position = EditorGUILayout.Vector3Field("Position", node.transform.position, GUILayout.MaxWidth(178));
+            EditorGUIUtility.labelWidth = 60;
+
+            //cr = EditorGUILayout.ObjectField("Node", cr, typeof(CameraRotation), true) as CameraRotation;
+
+            if (cr != null)
+                cr.transform.position = EditorGUILayout.Vector3Field("Position", cr.transform.position, GUILayout.MaxWidth(178));
+        }
+
+        public override void LinkConnection(ConnectionIO connection, BaseNode baseNode)
+        {
+            if (connection == ConnectionIO.Out) paths.pathsOut.Add(ft.pathNodes.Find(i => i.id == baseNode.id).spline);
+            if (connection == ConnectionIO.In) paths.pathsIn.Add(ft.pathNodes.Find(i => i.id == baseNode.id).spline);
+        }
+
+        public override void UnlinkConnection(ConnectionIO connection, BaseNode baseNode)
+        {
+            if (connection == ConnectionIO.Out)
+                paths.pathsOut.Remove(ft.pathNodes.Find(i => i.id == baseNode.id).spline);
+
+            if (connection == ConnectionIO.In)
+                paths.pathsIn.Remove(ft.pathNodes.Find(i => i.id == baseNode.id).spline);
         }
 
         private void CreateStartEndNode()
         {
-            if (node == null)
+            if (cr == null)
             {
-                GameObject startEndNode = new GameObject();
-                startEndNode.name = "Start-end node";
-                node = startEndNode.AddComponent<CameraRotation>();
+                node = new GameObject();
+                node.name = "Start-end node";
+                paths = node.AddComponent<PathConnections>();
+                cr = node.AddComponent<CameraRotation>();
             }
         }
     }

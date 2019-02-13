@@ -8,8 +8,15 @@ namespace QGM.FlyThrougCamera
 
     public class BezierSpline : MonoBehaviour
     {
-        public Vector3 startNodePosition = new Vector3(1,1,1);
-        public Vector3 endNodePosition = new Vector3(3,3,3);
+        public bool showPath = true;
+        public int steps = 12;
+        public Color pathColor = new Color(0.8f, 0, 0.5f);
+
+        public PathConnections nodeInConnection;
+        public PathConnections nodeOutConnection;
+
+        public Vector3 startNode = Vector3.zero;
+        public Vector3 endNode = Vector3.forward * 10;
 
         public List<Vector3> points;
         public List<Vector3> newPoints = new List<Vector3>();
@@ -135,9 +142,36 @@ namespace QGM.FlyThrougCamera
 
         public void Reset()
         {
-            Vector3 n = ((endNodePosition - startNodePosition) * 0.25f) + startNodePosition;
-            Vector3 m = ((endNodePosition - startNodePosition) * 0.75f) + startNodePosition;
-            points = new List<Vector3>() { startNodePosition, n, m, endNodePosition };
+            if (endNode != null && startNode != null)
+            {
+                Vector3 m = GetPositionAt(0.85f);
+                Vector3 n = GetPositionAt(0.15f);
+                points = new List<Vector3>() { startNode, n, m, endNode };
+            }
         }
+
+        private Vector3 GetPositionAt(float pos)
+        {
+            return ((endNode - startNode) * pos) + startNode;
+        }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (UnityEditor.Selection.activeGameObject == gameObject) return;
+            if (!showPath) return;
+
+            int NUMBER_OF_LINES = steps * points.Count - 1;
+
+            for (int i = 0; i < NUMBER_OF_LINES; i++)
+            {
+                Vector3 pointA = GetPoint((float)i / NUMBER_OF_LINES);
+                Vector3 pointB = GetPoint(((float)i + 1) / NUMBER_OF_LINES);
+
+                Gizmos.color = pathColor;
+                Gizmos.DrawLine(pointA, pointB);
+            }
+        }
+#endif
     }
 }

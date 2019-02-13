@@ -8,6 +8,10 @@ namespace QGM.FlyThrougCamera
         const int MAX_ANGLE = 360;
         const int SENSIBILITY = 1000;
 
+        public bool showSpot = true;
+        public float spotRadius = 0.5f;
+        public Color spotColor = new Color32(60, 11, 204, 200);
+
         public float offsetRotX = 0;
         public Vector2 limitX = new Vector2(0, 360);
         public Vector2 intLimitX;
@@ -106,5 +110,15 @@ namespace QGM.FlyThrougCamera
         {
             return Mathf.SmoothDamp(current, target, ref velRecover, Time.deltaTime * decelerationRate);
         }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (UnityEditor.Selection.activeGameObject == gameObject) return;
+            if (!showSpot) return;
+            Gizmos.color = spotColor;
+            Gizmos.DrawSphere(transform.position, spotRadius);
+        }
+#endif
     }
 }

@@ -16,11 +16,11 @@ namespace QGM.FlyThrougCamera
         [NonSerialized] public GUIStyle style;
         [NonSerialized] public Action<ConnectionPoint> OnClickConnectionPoint;
 
-        public ConnectionPoint(BaseNode node, TypeOfConnection type, TypeOfConnection typeOut, Action<ConnectionPoint> OnClickConnectionPoint)
+        public ConnectionPoint(BaseNode node, TypeOfConnection type, TypeOfConnection oppositeConnection, Action<ConnectionPoint> OnClickConnectionPoint)
         {
             this.node = node;
             this.type = type;
-            this.oppositeConnection = typeOut;
+            this.oppositeConnection = oppositeConnection;
             this.OnClickConnectionPoint = OnClickConnectionPoint;
             rect = new Rect(0, 0, 10f, 20f);
 
@@ -54,14 +54,14 @@ namespace QGM.FlyThrougCamera
             return oppositeConnection;
         }
 
-        public void LinkConnection(ConnectionIO connection, string id)
+        public void LinkConnection(ConnectionIO connection, BaseNode id)
         {
             node.LinkConnection(connection, id);
         }
 
-        public void UnlinkConnection(ConnectionIO connection)
+        public void UnlinkConnection(ConnectionIO connection, BaseNode id)
         {
-            node.UnlinkConnection(connection);
+            node.UnlinkConnection(connection, id);
         }
 
         public void Draw()

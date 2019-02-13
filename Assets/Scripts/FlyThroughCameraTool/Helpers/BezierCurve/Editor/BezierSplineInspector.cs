@@ -7,20 +7,25 @@ namespace QGM.FlyThrougCamera
     [CustomEditor(typeof(BezierSpline))]
     public class BezierSplineInspector : BoxLayoutInspector
     {
-        private BezierSpline spline;
-
         private const int STEPS_PER_CURVE = 10;
         private const float DIRECTION_SCALE = 0.5f;
         private const float HANDLE_SIZE = 0.06f;
         private const float PICK_SIZE = 0.1f;
+
+        private BezierSpline spline;
+
+        private SerializedProperty nodeInConnection;
+        private SerializedProperty nodeOutConnection;
         private Transform handleTransform;
         private Quaternion handleRotation;
         private int selectedIndex = -1;
-        SerializedProperty points;
+        private SerializedProperty points;
 
         void OnEnable()
         {
             spline = (BezierSpline)target;
+            nodeInConnection = serializedObject.FindProperty("nodeInConnection");
+            nodeOutConnection = serializedObject.FindProperty("nodeOutConnection");
             points = serializedObject.FindProperty("points");
         }
 
@@ -30,6 +35,7 @@ namespace QGM.FlyThrougCamera
 
             EditorGUI.BeginChangeCheck();
 
+            SectionBasicProperties();
             SectionStartEndNodes();
             SectionInnerPoints();
 
@@ -40,21 +46,38 @@ namespace QGM.FlyThrougCamera
             }
         }
 
-        private void SectionStartEndNodes()
+        private void SectionBasicProperties()
         {
-            Header("Star-End Path Nodes");
+            Header("Basic Properties");
 
-            spline.startNodePosition = EditorGUILayout.Vector3Field("Start Node Position", spline.startNodePosition);
-            //spline.SetControlPoint(0, spline.startNodePosition);
-            Vector3 v1 = spline.startNodePosition;
-            GUILayout.Label(string.Format("Start Node Position\tx:{0:0.000}   y:{1:0.000}   z:{2:0.000}", v1.x, v1.y, v1.z));
-            spline.endNodePosition = EditorGUILayout.Vector3Field("Start Node Position", spline.endNodePosition);
-            //spline.SetControlPoint(spline.points.Count - 1, spline.endNodePosition);
-            Vector3 v2 = spline.endNodePosition;
-            GUILayout.Label(string.Format("End Node Position\tx:{0:0.000}   y:{1:0.000}   z:{2:0.000}", v2.x, v2.y, v2.z));
+            spline.showPath = EditorGUILayout.Toggle("Is Visible", spline.showPath);
+            EditorGUI.BeginDisabledGroup(!spline.showPath);
+            spline.steps = Mathf.Clamp(EditorGUILayout.IntField("Number of Steps", spline.steps), 1, 100);
+            spline.pathColor = EditorGUILayout.ColorField("Color", spline.pathColor);
+            EditorGUI.EndDisabledGroup();
 
             Footer();
         }
+
+        private void SectionStartEndNodes()
+        {
+            Header("Star-End Path Nodes");
+            DebugNodes(spline.nodeInConnection, "Start");
+            DebugNodes(spline.nodeOutConnection, "End");
+            Footer();
+        }
+
+        private void DebugNodes(PathConnections node, string type)
+        {
+            if (node != null)
+            {
+                Vector3 v = node.transform.position;
+                GUILayout.Label(string.Format("    {3} Node Position\tx: {0:0.000}   y: {1:0.000}   z: {2:0.000}", v.x, v.y, v.z, type));
+            }
+            else
+                GUILayout.Label(string.Format("    {0} Node Position:\tNot yet connected", type));
+        }
+
 
         private void SectionInnerPoints()
         {
@@ -80,7 +103,6 @@ namespace QGM.FlyThrougCamera
                 EditorGUILayout.BeginHorizontal();
                 {
                     int SIZE = 22;
-
 
                     if (GUILayout.Button("R", GUILayout.MaxWidth(SIZE), GUILayout.MaxHeight(SIZE)))
                     {

@@ -15,6 +15,8 @@ namespace QGM.FlyThrougCamera
     [Serializable]
     public class BaseNode
     {
+        [NonSerialized] public FlyThroughManager ft;
+        public GameObject node;
         public string id;
         public string title;
         public TypeOfNode typeOfNode;
@@ -25,7 +27,6 @@ namespace QGM.FlyThrougCamera
 
         public void OnClickRemoveNodeEvent (Action<BaseNode> OnClickRemoveNode)
         {
-            //Debug.Log("<color=green>[FLY-TROUGH]</color> Recovering an existing node");
             OnRemoveNode = OnClickRemoveNode;
         }
 
@@ -36,14 +37,15 @@ namespace QGM.FlyThrougCamera
 
         public virtual void DrawNodes()
         {
-            Debug.Log("<color=green>[FLY-TROUGH]</color> Drawing nodes");
+            if (node == null)
+                OnRemoveNode(this);
         }
 
         public virtual void DrawWindow() { }
 
-        public virtual void LinkConnection(ConnectionIO connection, string id) { }
+        public virtual void LinkConnection(ConnectionIO connection, BaseNode id) { }
 
-        public virtual void UnlinkConnection(ConnectionIO connection) { }
+        public virtual void UnlinkConnection(ConnectionIO connection, BaseNode id) { }
 
         public bool ProcessEvents(Event e)
         {

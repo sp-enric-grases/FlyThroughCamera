@@ -10,13 +10,10 @@ namespace QGM.FlyThrougCamera
     public class CameraRotationInspector : BoxLayoutInspector
     {
         private CameraRotation cam;
-        private SerializedProperty a, b;
 
         void OnEnable()
         {
             cam = (CameraRotation)target;
-            a = serializedObject.FindProperty("a");
-            b = serializedObject.FindProperty("b");
         }
 
         public override void OnInspectorGUI()
@@ -26,11 +23,9 @@ namespace QGM.FlyThrougCamera
             EditorGUI.BeginChangeCheck();
             GUILayout.Space(5);
 
-            SectionProperties();
+            SectionBasicProperties();
+            SectionCameraProperties();
             SectionLimits();
-
-            //EditorGUILayout.PropertyField(a);
-            //EditorGUILayout.PropertyField(b);
 
             if (EditorGUI.EndChangeCheck())
                 Undo.RegisterCompleteObjectUndo(cam, "Camera Rotation");
@@ -56,9 +51,22 @@ namespace QGM.FlyThrougCamera
             cam.intLimitY.y = cam.limitY.y + cam.offsetRotY;
         }
 
-        private void SectionProperties()
+        private void SectionBasicProperties()
         {
             Header("Basic Properties");
+
+            cam.showSpot = EditorGUILayout.Toggle("Is Visible", cam.showSpot);
+            EditorGUI.BeginDisabledGroup(!cam.showSpot);
+            cam.spotRadius = Mathf.Clamp(EditorGUILayout.FloatField("Radius", cam.spotRadius), 0.1f, 5);
+            cam.spotColor = EditorGUILayout.ColorField("Color", cam.spotColor);
+            EditorGUI.EndDisabledGroup();
+
+            Footer();
+        }
+
+        private void SectionCameraProperties()
+        {
+            Header("Camera Properties");
 
             cam.sensibility = EditorGUILayout.FloatField("Sensibility", cam.sensibility);
             cam.invertDirection = EditorGUILayout.Toggle("Invert Controllers", cam.invertDirection);
