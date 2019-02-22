@@ -25,7 +25,7 @@ namespace QGM.FlyThrougCamera
                 item.SetControlPoint(0, transform.position-item.transform.position);
         }
 
-        public void ModeNode()
+        public void MoveNode()
         {
             Vector3 pos = transform.position;
             transform.position = Vector3.zero;

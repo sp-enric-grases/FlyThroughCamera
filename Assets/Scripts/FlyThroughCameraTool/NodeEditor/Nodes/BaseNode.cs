@@ -55,6 +55,7 @@ namespace QGM.FlyThrougCamera
                     if (e.button == 0)
                     {
                         isSelected = windowRect.Contains(e.mousePosition) ? true : false;
+                        if (isSelected) Selection.activeGameObject = node;
                         GUI.changed = true;
                     }
 

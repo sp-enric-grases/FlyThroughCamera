@@ -63,14 +63,19 @@ namespace QGM.FlyThrougCamera
         {
             if (connection == ConnectionIO.Out)
             {
-                spline.nodeOutConnection = ft.startEndNodes.Find(i => i.id == node.id).cr.gameObject.GetComponent<PathConnections>();
-                spline.nodeOutConnection.ModeNode();
+                spline.nodeOutConnection = ft.battleNodes.Find(i => i.id == node.id).cr.gameObject.GetComponent<PathConnections>();
+                spline.nodeOutConnection.MoveNode();
             }
 
             if (connection == ConnectionIO.In)
             {
-                spline.nodeInConnection = ft.startEndNodes.Find(i => i.id == node.id).cr.gameObject.GetComponent<PathConnections>();
-                spline.nodeInConnection.ModeNode();
+                PathConnections c = ft.battleNodes.Find(i => i.id == node.id).cr.gameObject.GetComponent<PathConnections>();
+                if (c != null)
+                    spline.nodeInConnection = c;
+                else
+                    spline.nodeInConnection = ft.startNode.cr.gameObject.GetComponent<PathConnections>();
+
+                spline.nodeInConnection.MoveNode();
             }
         }
 
@@ -85,13 +90,10 @@ namespace QGM.FlyThrougCamera
 
         private void CreatePathNode()
         {
-            if (ftp == null)
-            {
-                node = new GameObject();
-                node.name = "Path node";
-                ftp = node.AddComponent<FlyThroughPath>();
-                spline = ftp.GetComponent<BezierSpline>();
-            }
+            node = new GameObject();
+            node.name = "Path";
+            ftp = node.AddComponent<FlyThroughPath>();
+            spline = ftp.GetComponent<BezierSpline>();
         }
     }
 }

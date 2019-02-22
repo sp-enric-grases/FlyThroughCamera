@@ -14,6 +14,8 @@ namespace QGM.FlyThrougCamera
         void OnEnable()
         {
             paths = (PathConnections)target;
+            paths.hideFlags = HideFlags.HideInInspector;
+
             pathsIn = serializedObject.FindProperty("pathsIn");
             pathsOut = serializedObject.FindProperty("pathsOut");
         }
@@ -32,14 +34,6 @@ namespace QGM.FlyThrougCamera
 
             serializedObject.ApplyModifiedProperties();
             if (GUI.changed) EditorUtility.SetDirty(paths);
-        }
-
-        public void OnSceneGUI()
-        {
-            if (paths.transform.hasChanged)
-            {
-
-            }
         }
 
         private void SectionBasicProperties()

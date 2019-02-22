@@ -38,7 +38,7 @@ namespace QGM.FlyThrougCamera
         private void InitNodeLists()
         {
             ft.nodes = new List<Node>();
-            ft.startEndNodes = new List<StartEndNode>();
+            ft.battleNodes = new List<BattleNode>();
             ft.pathNodes = new List<PathNode>();
             ft.connections = new List<Connection>();
         }
@@ -49,8 +49,8 @@ namespace QGM.FlyThrougCamera
             {
                 switch (ft.nodes[id].typeOfNode)
                 {
-                    case TypeOfNode.StartEnd:
-                        StartEndNode sen = ft.startEndNodes.Find(n => n.id == ft.nodes[id].id);
+                    case TypeOfNode.Battle:
+                        BattleNode sen = ft.battleNodes.Find(n => n.id == ft.nodes[id].id);
                         sen.CreateConnections(ft, OnClickInPoint, OnClickOutPoint, false);
                         sen.OnClickRemoveNodeEvent(OnClickRemoveNode);
                         break;
@@ -84,7 +84,7 @@ namespace QGM.FlyThrougCamera
             {
                 switch (connectionPoint)
                 {
-                    case TypeOfNode.StartEnd:   return ft.startEndNodes.Find(n => n.id == idIn).inPoint;
+                    case TypeOfNode.Battle:   return ft.battleNodes.Find(n => n.id == idIn).inPoint;
                     case TypeOfNode.Path:       return ft.pathNodes.Find(n => n.id == idIn).inPoint;
                     default:                    return null;
                 }
@@ -93,7 +93,7 @@ namespace QGM.FlyThrougCamera
             {
                 switch (connectionPoint)
                 {
-                    case TypeOfNode.StartEnd:   return ft.startEndNodes.Find(n => n.id == idIn).outPoint;
+                    case TypeOfNode.Battle:   return ft.battleNodes.Find(n => n.id == idIn).outPoint;
                     case TypeOfNode.Path:       return ft.pathNodes.Find(n => n.id == idIn).outPoint;
                     default:                    return null;
                 }
@@ -128,8 +128,18 @@ namespace QGM.FlyThrougCamera
             {
                 switch (ft.nodes[id].typeOfNode)
                 {
-                    case TypeOfNode.StartEnd:
-                        StartEndNode sen = ft.startEndNodes.Find(n => n.id == ft.nodes[id].id);
+                    case TypeOfNode.Start:
+                        StartNode sn = ft.startNode;
+                        sn.windowRect = GUI.Window(id, sn.windowRect, DrawNodeList, sn.title);
+                        sn.DrawNodes();
+                        break;
+                    case TypeOfNode.End:
+                        EndNode en = ft.endNode;
+                        en.windowRect = GUI.Window(id, en.windowRect, DrawNodeList, en.title);
+                        en.DrawNodes();
+                        break;
+                    case TypeOfNode.Battle:
+                        BattleNode sen = ft.battleNodes.Find(n => n.id == ft.nodes[id].id);
                         sen.windowRect = GUI.Window(id, sen.windowRect, DrawNodeList, sen.title);
                         sen.DrawNodes();
                         break;
@@ -171,7 +181,9 @@ namespace QGM.FlyThrougCamera
         {
             switch (ft.nodes[id].typeOfNode)
             {
-                case TypeOfNode.StartEnd:   ft.startEndNodes.Find(n => n.id == ft.nodes[id].id).DrawWindow();   break;
+                case TypeOfNode.Start:      ft.startNode.DrawWindow();                                          break;
+                case TypeOfNode.End:        ft.endNode.DrawWindow();                                            break;
+                case TypeOfNode.Battle:     ft.battleNodes.Find(n => n.id == ft.nodes[id].id).DrawWindow();   break;
                 case TypeOfNode.Path:       ft.pathNodes.Find(n => n.id == ft.nodes[id].id).DrawWindow();       break;
             }
 
@@ -186,8 +198,10 @@ namespace QGM.FlyThrougCamera
 
                 switch (ft.nodes[id].typeOfNode)
                 {
-                    case TypeOfNode.StartEnd:   guiChanged = ft.startEndNodes.Find(n => n.id == ft.nodes[id].id).ProcessEvents(e); break;
-                    case TypeOfNode.Path:       guiChanged = ft.pathNodes.Find(n => n.id == ft.nodes[id].id).ProcessEvents(e);     break;
+                    case TypeOfNode.Start:      guiChanged = ft.startNode.ProcessEvents(e);                                         break;
+                    case TypeOfNode.End:        guiChanged = ft.endNode.ProcessEvents(e);                                           break;
+                    case TypeOfNode.Battle:     guiChanged = ft.battleNodes.Find(n => n.id == ft.nodes[id].id).ProcessEvents(e);  break;
+                    case TypeOfNode.Path:       guiChanged = ft.pathNodes.Find(n => n.id == ft.nodes[id].id).ProcessEvents(e);      break;
                 }
 
                 if (guiChanged) GUI.changed = true;
@@ -202,7 +216,7 @@ namespace QGM.FlyThrougCamera
             {
                 case EventType.MouseDown:
                     if (e.button == 0) ClearConnectionSelection();
-                    if (e.button == 1) ProcessContextMenu(e.mousePosition);
+                    if (e.button == 1) ContextMenu(e.mousePosition);
                     break;
 
                 case EventType.MouseDrag:
@@ -219,7 +233,9 @@ namespace QGM.FlyThrougCamera
             {
                 switch (ft.nodes[id].typeOfNode)
                 {
-                    case TypeOfNode.StartEnd:   ft.startEndNodes.Find(n => n.id == ft.nodes[id].id).Drag(delta);    break;
+                    case TypeOfNode.Start:      ft.startNode.Drag(delta);                                           break;
+                    case TypeOfNode.End:        ft.endNode.Drag(delta);                                             break;
+                    case TypeOfNode.Battle:     ft.battleNodes.Find(n => n.id == ft.nodes[id].id).Drag(delta);    break;
                     case TypeOfNode.Path:       ft.pathNodes.Find(n => n.id == ft.nodes[id].id).Drag(delta);        break;
                 }
             }
@@ -227,22 +243,51 @@ namespace QGM.FlyThrougCamera
             GUI.changed = true;
         }
 
-        private void ProcessContextMenu(Vector2 mousePosition)
+        private void ContextMenu(Vector2 mousePosition)
         {
-            GenericMenu genericMenu = new GenericMenu();
-            genericMenu.AddItem(new GUIContent("Add Start-End Node"), false, () => OnClickAddStartEndNode(mousePosition));
-            genericMenu.AddItem(new GUIContent("Add Path"), false, () => OnClickAddPath(mousePosition));
-            genericMenu.ShowAsContext();
+            GenericMenu menu = new GenericMenu();
+
+            if (ft.nodes.Any(n => n.typeOfNode == TypeOfNode.Start))
+                menu.AddDisabledItem(new GUIContent("Start Node"));
+            else
+                menu.AddItem(new GUIContent("Start Node"), false, () => OnClickAddStartNode(mousePosition));
+
+            if (ft.nodes.Any(n => n.typeOfNode == TypeOfNode.End))
+                menu.AddDisabledItem(new GUIContent("End Node"));
+            else
+                menu.AddItem(new GUIContent("End Node"), false, () => OnClickAddEndNode(mousePosition));
+
+            menu.AddSeparator("");
+            menu.AddItem(new GUIContent("Add Battle Node"), false, () => OnClickAddBattleNode(mousePosition));
+            menu.AddItem(new GUIContent("Add Path"), false, () => OnClickAddPath(mousePosition));
+            menu.ShowAsContext();
         }
 
-        private void OnClickAddStartEndNode(Vector2 mousePosition)
+        private void OnClickAddStartNode(Vector2 mousePosition)
         {
             Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
-            StartEndNode node = new StartEndNode
-                (ft, rect, GUID.Generate().ToString(), "Start-End Node", TypeOfNode.StartEnd, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
+            StartNode node = new StartNode(ft, rect, GUID.Generate().ToString(), "Start Node", TypeOfNode.Start, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
 
             AddNode(node.id, node.typeOfNode);
-            ft.startEndNodes.Add(node);
+            ft.startNode = node;
+        }
+
+        private void OnClickAddEndNode(Vector2 mousePosition)
+        {
+            Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
+            EndNode node = new EndNode(ft, rect, GUID.Generate().ToString(), "End Node", TypeOfNode.End, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
+
+            AddNode(node.id, node.typeOfNode);
+            ft.endNode = node;
+        }
+
+        private void OnClickAddBattleNode(Vector2 mousePosition)
+        {
+            Rect rect = new Rect(mousePosition.x, mousePosition.y, 205, 80);
+            BattleNode node = new BattleNode(ft, rect, GUID.Generate().ToString(), "Battle Node", TypeOfNode.Battle, OnClickRemoveNode, OnClickInPoint, OnClickOutPoint);
+
+            AddNode(node.id, node.typeOfNode);
+            ft.battleNodes.Add(node);
         }
 
         private void OnClickAddPath(Vector2 mousePosition)
@@ -317,9 +362,13 @@ namespace QGM.FlyThrougCamera
         {
             switch (node.typeOfNode)
             {
-                case TypeOfNode.StartEnd:
-                    DestroyImmediate(ft.startEndNodes.Find(n => n.id == node.id).node);
-                    ft.startEndNodes.Remove(ft.startEndNodes.Find(n => n.id == node.id));
+                case TypeOfNode.Start:
+                    DestroyImmediate(ft.startNode.node);
+                    ft.startNode = null;
+                    break;
+                case TypeOfNode.Battle:
+                    DestroyImmediate(ft.battleNodes.Find(n => n.id == node.id).node);
+                    ft.battleNodes.Remove(ft.battleNodes.Find(n => n.id == node.id));
                     break;
                 case TypeOfNode.Path:
                     DestroyImmediate(ft.pathNodes.Find(n => n.id == node.id).node);

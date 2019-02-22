@@ -6,14 +6,14 @@ using UnityEngine;
 namespace QGM.FlyThrougCamera
 {
     [Serializable]
-    public class StartEndNode : BaseNode
+    public class BattleNode : BaseNode
     {
         public CameraRotation cr;
         public PathConnections paths;
         public ConnectionPoint outPoint;
         public ConnectionPoint inPoint;
 
-        public StartEndNode(FlyThroughManager ft, Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickOutPoint, Action<ConnectionPoint> OnClickInPoint)
+        public BattleNode(FlyThroughManager ft, Rect rect, string id, string title, TypeOfNode typeOfNode, Action<BaseNode> OnClickRemoveNode, Action<ConnectionPoint> OnClickOutPoint, Action<ConnectionPoint> OnClickInPoint)
         {
             windowRect = rect;
             this.typeOfNode = typeOfNode;
@@ -70,7 +70,7 @@ namespace QGM.FlyThrougCamera
             if (cr == null)
             {
                 node = new GameObject();
-                node.name = "Start-end node";
+                node.name = "Battle node";
                 paths = node.AddComponent<PathConnections>();
                 cr = node.AddComponent<CameraRotation>();
             }

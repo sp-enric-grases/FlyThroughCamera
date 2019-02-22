@@ -35,6 +35,7 @@ namespace QGM.FlyThrougCamera
 
             EditorGUI.BeginChangeCheck();
 
+            ResetTransform();
             SectionBasicProperties();
             SectionStartEndNodes();
             SectionInnerPoints();
@@ -46,6 +47,13 @@ namespace QGM.FlyThrougCamera
             }
         }
 
+        private void ResetTransform()
+        {
+            //spline.transform.position = Vector3.zero;
+            spline.transform.eulerAngles = Vector3.zero;
+            spline.transform.localScale = Vector3.one;
+        }
+
         private void SectionBasicProperties()
         {
             Header("Basic Properties");
@@ -55,7 +63,7 @@ namespace QGM.FlyThrougCamera
             spline.steps = Mathf.Clamp(EditorGUILayout.IntField("Number of Steps", spline.steps), 1, 100);
             spline.pathColor = EditorGUILayout.ColorField("Color", spline.pathColor);
             EditorGUI.EndDisabledGroup();
-
+            
             Footer();
         }
 

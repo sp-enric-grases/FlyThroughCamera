@@ -6,7 +6,9 @@ namespace QGM.FlyThrougCamera
 {
     public enum TypeOfNode
     {
-        StartEnd,
+        Start,
+        End,
+        Battle,
         Path,
         Influencer,
         Trigger
@@ -14,8 +16,11 @@ namespace QGM.FlyThrougCamera
 
     public class FlyThroughManager : MonoBehaviour
     {
+        public Camera cam;
         public List<Node> nodes;
-        public List<StartEndNode> startEndNodes;
+        public StartNode startNode;
+        public EndNode endNode;
+        public List<BattleNode> battleNodes;
         public List<PathNode> pathNodes;
         public List<Connection> connections;
     }

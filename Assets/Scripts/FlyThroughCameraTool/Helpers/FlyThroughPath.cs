@@ -42,6 +42,7 @@ namespace QGM.FlyThrougCamera
         private void Start()
         {
             //reference = new GameObject();
+            spline = GetComponent<BezierSpline>();
 
             foreach (var item in inf)
             {
@@ -60,14 +61,6 @@ namespace QGM.FlyThrougCamera
             //CreateCameraCollider();
 
             CreateFinalReference();
-        }
-
-        public void Init(Vector3 startPoint, Vector3 endPoint)
-        {
-            spline = gameObject.GetComponent<BezierSpline>();
-            spline.startNode = startPoint;
-            spline.endNode = endPoint;
-            spline.Reset();
         }
 
         private void  CreateFinalReference()

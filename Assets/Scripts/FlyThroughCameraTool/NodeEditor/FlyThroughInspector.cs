@@ -9,17 +9,23 @@ namespace QGM.FlyThrougCamera
     public class FlyThroughInspector : Editor
     {
         private FlyThroughManager SEManager;
+        private SerializedProperty cam;
         private SerializedProperty nodes;
         private SerializedProperty connections;
-        private SerializedProperty startEndNodes;
+        private SerializedProperty startNode;
+        private SerializedProperty endNode;
+        private SerializedProperty battleNodes;
         private SerializedProperty pathNodes;
 
         void OnEnable()
         {
             SEManager = (FlyThroughManager)target;
+            cam = serializedObject.FindProperty("cam");
             nodes = serializedObject.FindProperty("nodes");
+            startNode = serializedObject.FindProperty("startNode");
+            endNode = serializedObject.FindProperty("endNode");
             connections = serializedObject.FindProperty("connections");
-            startEndNodes = serializedObject.FindProperty("startEndNodes");
+            battleNodes = serializedObject.FindProperty("battleNodes");
             pathNodes = serializedObject.FindProperty("pathNodes");
         }
 
@@ -27,7 +33,10 @@ namespace QGM.FlyThrougCamera
         {
             serializedObject.Update();
 
-            EditorGUI.BeginChangeCheck();            
+            EditorGUI.BeginChangeCheck();
+            GUILayout.Space(10);
+            EditorGUILayout.PropertyField(cam, new GUIContent("Camera"), true);
+            GUILayout.Space(10);
             if (GUILayout.Button("Open in Editor"))
             {
                 FlyThroughEditor scriptableExEditor = (FlyThroughEditor)EditorWindow.GetWindow(typeof(FlyThroughEditor));
@@ -35,7 +44,9 @@ namespace QGM.FlyThrougCamera
             }
 
             EditorGUILayout.PropertyField(nodes, new GUIContent("Nodes"), true);
-            EditorGUILayout.PropertyField(startEndNodes, new GUIContent("Start-End Nodes"), true);
+            EditorGUILayout.PropertyField(startNode, new GUIContent("Start Node"), true);
+            EditorGUILayout.PropertyField(endNode, new GUIContent("End Node"), true);
+            EditorGUILayout.PropertyField(battleNodes, new GUIContent("Battle Nodes"), true);
             EditorGUILayout.PropertyField(pathNodes, new GUIContent("Paths"), true);
             GUILayout.Space(5);
             EditorGUILayout.PropertyField(connections, new GUIContent("Connections"), true);
